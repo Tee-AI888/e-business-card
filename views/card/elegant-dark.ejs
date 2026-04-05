@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><%= card.name_en %><%= card.title ? ' – ' + card.title : '' %></title>
+<link href="https://fonts.googleapis.com/css2?family=<%= (cssVars.googleFonts || 'Playfair+Display:wght@400;600;700;800&family=Lato:wght@300;400;700&family=DM+Mono:wght@400;500').replace(/\|/g, '&family=') %>&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: <%= cssVars.bg || '#0f0f0f' %>;
+    --panel: <%= cssVars.panel || '#1a1a1a' %>;
+    --card: <%= cssVars.card || '#1a1a1a' %>;
+    --border: <%= cssVars.border || '#2a2a2a' %>;
+    --accent: <%= cssVars.accent || '#d4a853' %>;
+    --accent2: <%= cssVars.accent2 || '#b8860b' %>;
+    --accent3: <%= cssVars.accent3 || '#c9a84c' %>;
+    --gold: <%= cssVars.gold || '#d4a853' %>;
+    --text: <%= cssVars.text || '#e8e0d4' %>;
+    --text-dim: <%= cssVars.textDim || '#7a7268' %>;
+    --mono: <%= cssVars.fontMono || "'DM Mono', monospace" %>;
+    --sans: <%= cssVars.fontSans || "'Lato', sans-serif" %>;
+    --cond: <%= cssVars.fontCond || "'Playfair Display', serif" %>;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    font-family: var(--sans);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow-x: hidden;
+  }
+
+  /* Subtle radial glow background */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 50%; left: 50%;
+    width: 600px; height: 600px;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(212,168,83,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .card-wrapper {
+    width: 100%; max-width: 460px;
+    animation: elegantReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+  }
+  @keyframes elegantReveal { to { opacity: 1; } }
+
+  .card {
+    background: var(--card);
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.4), 0 0 80px rgba(212,168,83,0.05);
+  }
+
+  /* Gold accent line at top */
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 10%; right: 10%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    z-index: 2;
+  }
+
+  /* Header */
+  .card-header {
+    padding: 40px 32px 24px;
+    text-align: center;
+    position: relative;
+  }
+
+  .avatar-wrap {
+    width: 100px; height: 100px;
+    margin: 0 auto 20px;
+    position: relative;
+    animation: fadeIn 0.6s 0.2s both;
+  }
+  .avatar-ring {
+    position: absolute; inset: -3px;
+    border-radius: 50%;
+    border: 1.5px solid var(--accent);
+    opacity: 0.6;
+  }
+  .avatar {
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    object-fit: cover; object-position: top;
+    display: block;
+    border: 3px solid var(--card);
+    filter: brightness(1.02) contrast(1.02);
+  }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  .name-en {
+    font-family: var(--cond);
+    font-weight: 700; font-size: 26px;
+    color: var(--text); letter-spacing: 1px;
+    margin-bottom: 2px;
+    animation: fadeIn 0.6s 0.3s both;
+  }
+  .name-th {
+    font-family: var(--sans);
+    font-weight: 300; font-size: 14px;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+    animation: fadeIn 0.6s 0.35s both;
+  }
+  .title-text {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    animation: fadeIn 0.6s 0.4s both;
+  }
+  .company-text {
+    font-size: 13px;
+    color: var(--text-dim);
+    font-weight: 400;
+    animation: fadeIn 0.6s 0.45s both;
+  }
+
+  /* Ornamental divider */
+  .ornament {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 8px 32px;
+    animation: fadeIn 0.6s 0.5s both;
+  }
+  .ornament-line {
+    flex: 1; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+  }
+  .ornament-diamond {
+    width: 6px; height: 6px;
+    background: var(--accent);
+    transform: rotate(45deg);
+    opacity: 0.6;
+  }
+
+  /* Contacts */
+  .contacts {
+    padding: 12px 24px 24px;
+    display: flex; flex-direction: column; gap: 6px;
+    animation: fadeIn 0.6s 0.55s both;
+  }
+  .contact-item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 12px 16px; border-radius: 12px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid transparent;
+    text-decoration: none; color: inherit;
+    cursor: pointer; transition: all 0.3s ease;
+  }
+  .contact-item:hover {
+    background: rgba(212,168,83,0.05);
+    border-color: rgba(212,168,83,0.15);
+  }
+  .contact-icon {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(212,168,83,0.08);
+    border: 1px solid rgba(212,168,83,0.15);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; font-size: 14px;
+    transition: all 0.3s;
+  }
+  .contact-item:hover .contact-icon {
+    background: rgba(212,168,83,0.15);
+    box-shadow: 0 0 16px rgba(212,168,83,0.15);
+  }
+  .contact-text { flex: 1; min-width: 0; }
+  .contact-label {
+    font-family: var(--mono); font-size: 9px;
+    color: var(--text-dim); letter-spacing: 2px;
+    text-transform: uppercase; margin-bottom: 3px;
+  }
+  .contact-value {
+    font-size: 13px; color: var(--text);
+    font-weight: 400; white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis;
+  }
+  .contact-arrow {
+    font-size: 14px; color: var(--text-dim);
+    transition: all 0.3s;
+  }
+  .contact-item:hover .contact-arrow { color: var(--accent); transform: translateX(2px); }
+  .address-item .contact-value { white-space: normal; font-size: 12px; line-height: 1.5; }
+
+  /* QR Section */
+  .qr-section {
+    padding: 16px 20px; margin: 0 24px 16px;
+    display: flex; align-items: center; gap: 16px;
+    background: rgba(212,168,83,0.03);
+    border-radius: 14px;
+    border: 1px solid rgba(212,168,83,0.1);
+    animation: fadeIn 0.6s 0.6s both;
+  }
+  .qr-box { width: 64px; height: 64px; flex-shrink: 0; }
+  .qr-box svg { width: 64px; height: 64px; }
+  .qr-info { flex: 1; }
+  .qr-title {
+    font-family: var(--mono); font-size: 9px;
+    color: var(--accent); letter-spacing: 2px;
+    margin-bottom: 4px;
+  }
+  .qr-desc { font-size: 11px; color: var(--text-dim); line-height: 1.5; }
+
+  /* Actions */
+  .actions {
+    padding: 0 24px 28px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    animation: fadeIn 0.6s 0.65s both;
+  }
+  .btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 13px; border-radius: 12px;
+    font-family: var(--mono); font-size: 10px;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    cursor: pointer; border: none;
+    transition: all 0.3s ease; text-decoration: none; font-weight: 500;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    color: #0f0f0f;
+    box-shadow: 0 2px 16px rgba(212,168,83,0.2);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(212,168,83,0.3); }
+  .btn-secondary {
+    background: transparent; color: var(--accent);
+    border: 1px solid rgba(212,168,83,0.3);
+  }
+  .btn-secondary:hover {
+    background: rgba(212,168,83,0.06);
+    border-color: var(--accent);
+  }
+
+  /* Footer */
+  .card-footer {
+    border-top: 1px solid var(--border);
+    padding: 14px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    animation: fadeIn 0.6s 0.7s both;
+  }
+  .footer-brand {
+    font-family: var(--mono); font-size: 9px;
+    color: var(--text-dim); letter-spacing: 2px;
+  }
+  .verified-badge {
+    display: flex; align-items: center; gap: 6px;
+    font-family: var(--mono); font-size: 9px;
+    color: var(--accent); letter-spacing: 1px;
+  }
+  .verified-dot {
+    width: 6px; height: 6px;
+    background: var(--accent); border-radius: 50%;
+    animation: pulse 2.5s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(212,168,83,0.3); }
+    50% { box-shadow: 0 0 0 5px rgba(212,168,83,0); }
+  }
+
+  /* Toast */
+  .copied-toast {
+    position: fixed; bottom: 30px; left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: var(--accent); color: #0f0f0f;
+    font-family: var(--mono); font-size: 11px;
+    padding: 8px 20px; border-radius: 20px;
+    letter-spacing: 2px; opacity: 0;
+    transition: all 0.3s ease; pointer-events: none; z-index: 100;
+  }
+  .copied-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* QR Popup */
+  .qr-overlay {
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(15,15,15,0.92); backdrop-filter: blur(12px);
+    display: flex; align-items: center; justify-content: center; flex-direction: column;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+  }
+  .qr-overlay.show { opacity: 1; pointer-events: auto; }
+  .qr-overlay-box {
+    width: 220px; height: 220px; padding: 16px;
+    background: #fff; border-radius: 16px;
+    box-shadow: 0 0 40px rgba(212,168,83,0.2), 0 0 80px rgba(212,168,83,0.1);
+    animation: qrPop 0.3s ease;
+  }
+  .qr-overlay-box svg { width: 100%; height: 100%; }
+  @keyframes qrPop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .qr-overlay-text {
+    font-family: var(--mono); font-size: 10px; color: var(--accent);
+    letter-spacing: 3px; margin-top: 16px; text-transform: uppercase;
+  }
+  .qr-overlay-close {
+    font-family: var(--mono); font-size: 10px; color: var(--text-dim);
+    letter-spacing: 2px; margin-top: 12px; cursor: pointer;
+    padding: 6px 16px; border: 1px solid rgba(212,168,83,0.2); border-radius: 6px;
+    background: none; transition: all 0.2s;
+  }
+  .qr-overlay-close:hover { border-color: var(--accent); color: var(--accent); }
+  .qr-section { cursor: pointer; transition: all 0.3s; }
+  .qr-section:hover { border-color: rgba(212,168,83,0.3); background: rgba(212,168,83,0.05); }
+</style>
+</head>
+<body>
+
+<div class="copied-toast" id="toast">COPIED ✓</div>
+
+<div class="card-wrapper">
+  <div class="card">
+
+    <div class="card-header">
+      <div class="avatar-wrap">
+        <div class="avatar-ring"></div>
+        <img class="avatar" src="<%= card.profile_image || '' %>" alt="<%= card.name_en %>" onerror="this.style.background='linear-gradient(135deg,#2a2a2a,#1a1a1a)';this.src=''">
+      </div>
+      <div class="name-en"><%= card.name_en %></div>
+      <% if (card.name_th) { %><div class="name-th"><%= card.name_th %></div><% } %>
+      <% if (card.title) { %><div class="title-text"><%= card.title %></div><% } %>
+      <% if (card.company_en || card.company_th) { %>
+        <div class="company-text"><%= card.company_en || card.company_th %></div>
+      <% } %>
+    </div>
+
+    <div class="ornament">
+      <div class="ornament-line"></div>
+      <div class="ornament-diamond"></div>
+      <div class="ornament-line"></div>
+    </div>
+
+    <div class="contacts">
+      <% if (card.mobile) { %>
+      <a class="contact-item" href="tel:<%= card.mobile %>" onclick="copyToClipboard('<%= card.mobile %>')">
+        <div class="contact-icon">📱</div>
+        <div class="contact-text">
+          <div class="contact-label">MOBILE</div>
+          <div class="contact-value"><%= card.mobile %></div>
+        </div>
+        <div class="contact-arrow">›</div>
+      </a>
+      <% } %>
+      <% if (card.mobile2) { %>
+      <a class="contact-item" href="tel:<%= card.mobile2 %>" onclick="copyToClipboard('<%= card.mobile2 %>')">
+        <div class="contact-icon">📱</div>
+        <div class="contact-text">
+          <div class="contact-label">MOBILE 2</div>
+          <div class="contact-value"><%= card.mobile2 %></div>
+        </div>
+        <div class="contact-arrow">›</div>
+      </a>
+      <% } %>
+      <% if (card.office_phone) { %>
+      <a class="contact-item" href="tel:<%= card.office_phone.split('/')[0].trim().split(' ')[0] %>">
+        <div class="contact-icon">☎️</div>
+        <div class="contact-text">
+          <div class="contact-label">OFFICE</div>
+          <div class="contact-value"><%= card.office_phone %></div>
+        </div>
+        <div class="contact-arrow">›</div>
+      </a>
+      <% } %>
+      <% if (card.email) { %>
+      <a class="contact-item" href="mailto:<%= card.email %>" onclick="copyToClipboard('<%= card.email %>')">
+        <div class="contact-icon">✉️</div>
+        <div class="contact-text">
+          <div class="contact-label">EMAIL</div>
+          <div class="contact-value"><%= card.email %></div>
+        </div>
+        <div class="contact-arrow">›</div>
+      </a>
+      <% } %>
+      <% if (card.website) { %>
+      <a class="contact-item" href="<%= card.website %>" target="_blank">
+        <div class="contact-icon">🌐</div>
+        <div class="contact-text">
+          <div class="contact-label">WEBSITE</div>
+          <div class="contact-value"><%= card.website.replace(/^https?:\/\//, '') %></div>
+        </div>
+        <div class="contact-arrow">›</div>
+      </a>
+      <% } %>
+      <% if (card.address) { %>
+      <div class="contact-item address-item">
+        <div class="contact-icon">📍</div>
+        <div class="contact-text">
+          <div class="contact-label">ADDRESS</div>
+          <div class="contact-value"><%= card.address %></div>
+        </div>
+      </div>
+      <% } %>
+    </div>
+
+    <% if (qrCodeSvg) { %>
+    <div class="qr-section" onclick="openQr()">
+      <div class="qr-box"><%- qrCodeSvg %></div>
+      <div class="qr-info">
+        <div class="qr-title">DIGITAL CONTACT</div>
+        <div class="qr-desc">Tap QR to enlarge · Scan to save contact</div>
+      </div>
+    </div>
+    <div class="qr-overlay" id="qrOverlay" onclick="closeQr(event)">
+      <div class="qr-overlay-box"><%- qrCodeSvg %></div>
+      <div class="qr-overlay-text">SCAN TO CONNECT</div>
+      <button class="qr-overlay-close" onclick="closeQr(event)">✕ CLOSE</button>
+    </div>
+    <% } %>
+
+    <div class="actions">
+      <button class="btn btn-primary" onclick="saveContact()">
+        <span>⊕</span> ADD CONTACT
+      </button>
+      <button class="btn btn-secondary" onclick="shareCard()">
+        <span>⇗</span> SHARE CARD
+      </button>
+    </div>
+
+    <div class="card-footer">
+      <div class="footer-brand"><%= card.company_en ? card.company_en.toUpperCase() : 'E-BUSINESS CARD' %></div>
+      <div class="verified-badge">
+        <div class="verified-dot"></div>
+        VERIFIED
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).catch(() => {});
+    const toast = document.getElementById('toast');
+    toast.textContent = 'COPIED ✓';
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2000);
+  }
+
+  function saveContact() {
+    const nameParts = '<%= card.name_en %>'.split(' ');
+    const lastName = nameParts.pop();
+    const firstName = nameParts.join(' ');
+    const vcard = [
+      'BEGIN:VCARD', 'VERSION:3.0',
+      'N:' + lastName + ';' + firstName + ';;;',
+      'FN:<%= card.name_en %>',
+      '<%= card.company_en ? "ORG:" + card.company_en : "" %>',
+      '<%= card.title ? "TITLE:" + card.title : "" %>',
+      '<%= card.mobile ? "TEL;TYPE=CELL:" + card.mobile : "" %>',
+      '<%= card.mobile2 ? "TEL;TYPE=CELL:" + card.mobile2 : "" %>',
+      '<%= card.office_phone ? "TEL;TYPE=WORK:" + card.office_phone.split("/")[0].trim() : "" %>',
+      '<%= card.email ? "EMAIL;TYPE=WORK:" + card.email : "" %>',
+      '<%= card.website ? "URL:" + card.website : "" %>',
+      '<%= card.address ? "ADR;TYPE=WORK:;;" + card.address.replace(/,/g, ";") : "" %>',
+      'END:VCARD'
+    ].filter(l => l && !l.endsWith(':')).join('\r\n');
+
+    const blob = new Blob([vcard], { type: 'text/vcard' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = '<%= card.name_en.toLowerCase().replace(/\\s+/g, "_") %>.vcf';
+    a.click();
+    URL.revokeObjectURL(url);
+    const toast = document.getElementById('toast');
+    toast.textContent = 'CONTACT SAVED ✓';
+    toast.classList.add('show');
+    setTimeout(() => { toast.classList.remove('show'); toast.textContent = 'COPIED ✓'; }, 2500);
+  }
+
+  function openQr() {
+    document.getElementById('qrOverlay').classList.add('show');
+  }
+  function closeQr(e) {
+    if (e.target.id === 'qrOverlay' || e.target.classList.contains('qr-overlay-close')) {
+      document.getElementById('qrOverlay').classList.remove('show');
+    }
+  }
+
+  function shareCard() {
+    if (navigator.share) {
+      navigator.share({
+        title: '<%= card.name_en %><%= card.title ? " – " + card.title : "" %>',
+        text: '<%= card.company_en ? card.company_en + "\\n" : "" %><%= card.mobile ? "Tel: " + card.mobile + "\\n" : "" %><%= card.email ? "Email: " + card.email : "" %>',
+        url: window.location.href
+      }).catch(() => {});
+    } else {
+      copyToClipboard(window.location.href);
+      const toast = document.getElementById('toast');
+      toast.textContent = 'LINK COPIED ✓';
+      toast.classList.add('show');
+      setTimeout(() => { toast.classList.remove('show'); toast.textContent = 'COPIED ✓'; }, 2500);
+    }
+  }
+</script>
+</body>
+</html>

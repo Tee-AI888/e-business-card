@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><%= card.name_en %><%= card.title ? ' – ' + card.title : '' %></title>
+<link href="https://fonts.googleapis.com/css2?family=<%= (cssVars.googleFonts || 'Share+Tech+Mono&family=Barlow:wght@300;400;600;700&family=Barlow+Condensed:wght@700;800').replace(/\|/g, '&family=') %>&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: <%= cssVars.bg || '#050d1a' %>;
+    --panel: <%= cssVars.panel || '#080f1e' %>;
+    --card: <%= cssVars.card || '#0a1628' %>;
+    --border: <%= cssVars.border || '#1a3060' %>;
+    --accent: <%= cssVars.accent || '#00d4ff' %>;
+    --accent2: <%= cssVars.accent2 || '#0066ff' %>;
+    --accent3: <%= cssVars.accent3 || '#00ff9d' %>;
+    --gold: <%= cssVars.gold || '#ffc857' %>;
+    --text: <%= cssVars.text || '#c8daf0' %>;
+    --text-dim: <%= cssVars.textDim || '#4a6a8a' %>;
+    --mono: <%= cssVars.fontMono || "'Share Tech Mono', monospace" %>;
+    --sans: <%= cssVars.fontSans || "'Barlow', sans-serif" %>;
+    --cond: <%= cssVars.fontCond || "'Barlow Condensed', sans-serif" %>;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    font-family: var(--sans);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    animation: gridPulse 8s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  @keyframes gridPulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+
+  .particles { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+  .particle {
+    position: absolute; width: 2px; height: 2px; background: var(--accent);
+    border-radius: 50%; animation: float linear infinite; opacity: 0;
+  }
+  @keyframes float {
+    0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+    10% { opacity: 0.6; }
+    90% { opacity: 0.3; }
+    100% { transform: translateY(-100px) translateX(30px); opacity: 0; }
+  }
+
+  .card-wrapper {
+    position: relative; z-index: 1; width: 100%; max-width: 480px;
+    animation: cardReveal 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0; transform: translateY(30px);
+  }
+  @keyframes cardReveal { to { opacity: 1; transform: translateY(0); } }
+
+  .card-border {
+    position: relative; border-radius: 20px; padding: 2px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2), var(--accent3), var(--accent));
+    background-size: 300% 300%; animation: borderGlow 4s ease infinite;
+    box-shadow: 0 0 30px rgba(0,212,255,0.2), 0 0 60px rgba(0,102,255,0.1), 0 20px 60px rgba(0,0,0,0.6);
+  }
+  @keyframes borderGlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .card { background: var(--card); border-radius: 18px; overflow: hidden; position: relative; }
+
+  .card-header {
+    position: relative;
+    background: linear-gradient(135deg, #040d1e 0%, #071428 50%, #040d1e 100%);
+    padding: 32px 28px 28px; overflow: hidden;
+  }
+  .card-header::before {
+    content: ''; position: absolute; top: 0; right: 0; width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(0,212,255,0.12) 0%, transparent 70%);
+    border-radius: 50%; transform: translate(40%, -40%);
+  }
+  .card-header::after {
+    content: 'NYTG'; position: absolute; bottom: -20px; right: 24px;
+    font-family: var(--cond); font-size: 80px; font-weight: 800;
+    color: rgba(0,212,255,0.04); letter-spacing: 4px; user-select: none;
+  }
+
+  .sys-id {
+    font-family: var(--mono); font-size: 10px; color: var(--accent3);
+    letter-spacing: 3px; margin-bottom: 20px; display: flex;
+    align-items: center; gap: 8px; animation: fadeIn 0.5s 0.3s both;
+  }
+  .sys-id::before { content: ''; width: 20px; height: 1px; background: var(--accent3); }
+
+  .profile-row {
+    display: flex; align-items: flex-end; gap: 20px;
+    position: relative; z-index: 1; animation: fadeIn 0.5s 0.4s both;
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  .avatar-wrap { position: relative; flex-shrink: 0; }
+  .avatar-ring {
+    position: absolute; inset: -4px; border-radius: 50%;
+    border: 2px solid transparent;
+    background: linear-gradient(135deg, var(--accent), var(--accent3)) border-box;
+    -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: destination-out; mask-composite: exclude;
+    animation: rotateSlow 8s linear infinite;
+  }
+  @keyframes rotateSlow { to { transform: rotate(360deg); } }
+
+  .avatar {
+    width: 90px; height: 90px; border-radius: 50%; object-fit: cover; object-position: top;
+    display: block; filter: brightness(1.05) contrast(1.05); border: 3px solid var(--bg);
+  }
+  .avatar-status {
+    position: absolute; bottom: 2px; right: 2px; width: 14px; height: 14px;
+    background: var(--accent3); border-radius: 50%; border: 2px solid var(--bg);
+    box-shadow: 0 0 8px var(--accent3);
+  }
+
+  .profile-info { flex: 1; }
+  .name-th { font-family: var(--sans); font-weight: 700; font-size: 20px; color: white; line-height: 1.2; margin-bottom: 3px; }
+  .name-en { font-family: var(--cond); font-weight: 700; font-size: 18px; color: var(--accent); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
+  .title-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(0,212,255,0.08); border: 1px solid rgba(0,212,255,0.25);
+    border-radius: 4px; padding: 3px 10px;
+    font-family: var(--mono); font-size: 9px; color: var(--accent); letter-spacing: 1px;
+  }
+  .title-badge::before { content: '▶'; font-size: 7px; }
+
+  .circuit-divider { position: relative; height: 24px; margin: 0; overflow: visible; animation: fadeIn 0.5s 0.5s both; }
+  .circuit-divider svg { width: 100%; height: 100%; }
+
+  .company-section { padding: 0 28px 20px; animation: fadeIn 0.5s 0.55s both; }
+  .company-name-th { font-family: var(--sans); font-weight: 600; font-size: 13px; color: var(--gold); margin-bottom: 2px; }
+  .company-name-en { font-family: var(--cond); font-weight: 700; font-size: 17px; color: white; letter-spacing: 1px; }
+
+  .contacts { padding: 0 20px 24px; display: flex; flex-direction: column; gap: 8px; animation: fadeIn 0.5s 0.6s both; }
+  .contact-item {
+    display: flex; align-items: center; gap: 14px; padding: 10px 14px;
+    border-radius: 10px; background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(26,48,96,0.6); cursor: pointer;
+    text-decoration: none; transition: all 0.25s ease; position: relative; overflow: hidden;
+  }
+  .contact-item::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+    width: 3px; background: var(--accent2); opacity: 0; transition: opacity 0.25s;
+  }
+  .contact-item:hover { background: rgba(0,102,255,0.08); border-color: rgba(0,212,255,0.3); transform: translateX(4px); }
+  .contact-item:hover::before { opacity: 1; }
+
+  .contact-icon {
+    width: 34px; height: 34px; border-radius: 8px;
+    background: rgba(0,212,255,0.08); border: 1px solid rgba(0,212,255,0.2);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    font-size: 14px; transition: all 0.25s;
+  }
+  .contact-item:hover .contact-icon { background: rgba(0,212,255,0.15); box-shadow: 0 0 12px rgba(0,212,255,0.3); }
+
+  .contact-text { flex: 1; min-width: 0; }
+  .contact-label { font-family: var(--mono); font-size: 9px; color: var(--text-dim); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 2px; }
+  .contact-value { font-size: 13px; color: var(--text); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  .contact-arrow { font-size: 10px; color: var(--text-dim); transition: color 0.25s, transform 0.25s; }
+  .contact-item:hover .contact-arrow { color: var(--accent); transform: translateX(3px); }
+
+  .actions { padding: 0 20px 28px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; animation: fadeIn 0.5s 0.7s both; }
+  .btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 12px; border-radius: 10px; font-family: var(--mono); font-size: 11px;
+    letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer; border: none;
+    transition: all 0.25s ease; text-decoration: none; font-weight: 600;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    color: var(--bg); box-shadow: 0 0 20px rgba(0,212,255,0.25);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(0,212,255,0.4); }
+  .btn-secondary { background: transparent; color: var(--accent); border: 1px solid rgba(0,212,255,0.35); }
+  .btn-secondary:hover { background: rgba(0,212,255,0.08); border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,212,255,0.15); }
+
+  .card-footer {
+    border-top: 1px solid var(--border); padding: 14px 28px;
+    display: flex; align-items: center; justify-content: space-between;
+    animation: fadeIn 0.5s 0.75s both;
+  }
+  .footer-brand { font-family: var(--mono); font-size: 9px; color: var(--text-dim); letter-spacing: 2px; }
+  .scan-badge { display: flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 9px; color: var(--accent3); letter-spacing: 1px; }
+  .pulse-dot { width: 6px; height: 6px; background: var(--accent3); border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(0,255,157,0.4); }
+    50% { box-shadow: 0 0 0 5px rgba(0,255,157,0); }
+  }
+
+  .qr-section {
+    padding: 16px 20px; display: flex; align-items: center; gap: 16px;
+    background: rgba(0,0,0,0.2); animation: fadeIn 0.5s 0.65s both;
+    margin: 0 20px 16px; border-radius: 12px; border: 1px solid var(--border);
+  }
+  .qr-box {
+    width: 70px; height: 70px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; overflow: hidden;
+  }
+  .qr-box svg { width: 70px; height: 70px; }
+  .qr-info { flex: 1; }
+  .qr-title { font-family: var(--mono); font-size: 9px; color: var(--accent3); letter-spacing: 2px; margin-bottom: 5px; }
+  .qr-desc { font-size: 11px; color: var(--text-dim); line-height: 1.5; }
+
+  .card::after {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    animation: scanline 4s linear infinite; pointer-events: none; z-index: 10; opacity: 0.5;
+  }
+  @keyframes scanline {
+    0% { top: 0; opacity: 0; } 5% { opacity: 0.5; } 95% { opacity: 0.3; } 100% { top: 100%; opacity: 0; }
+  }
+
+  .copied-toast {
+    position: fixed; bottom: 30px; left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: var(--accent3); color: var(--bg);
+    font-family: var(--mono); font-size: 11px; padding: 8px 18px;
+    border-radius: 20px; letter-spacing: 2px; opacity: 0;
+    transition: all 0.3s ease; pointer-events: none; z-index: 100;
+  }
+  .copied-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .address-item .contact-value { white-space: normal; font-size: 11px; line-height: 1.4; }
+
+  /* QR Popup */
+  .qr-overlay {
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(5,13,26,0.92); backdrop-filter: blur(12px);
+    display: flex; align-items: center; justify-content: center; flex-direction: column;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+  }
+  .qr-overlay.show { opacity: 1; pointer-events: auto; }
+  .qr-overlay-box {
+    width: 220px; height: 220px; padding: 16px;
+    background: #fff; border-radius: 16px;
+    box-shadow: 0 0 40px rgba(0,212,255,0.3), 0 0 80px rgba(0,102,255,0.15);
+    animation: qrPop 0.3s ease;
+  }
+  .qr-overlay-box svg { width: 100%; height: 100%; }
+  @keyframes qrPop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .qr-overlay-text {
+    font-family: var(--mono); font-size: 10px; color: var(--accent3);
+    letter-spacing: 3px; margin-top: 16px; text-transform: uppercase;
+  }
+  .qr-overlay-close {
+    font-family: var(--mono); font-size: 10px; color: var(--text-dim);
+    letter-spacing: 2px; margin-top: 12px; cursor: pointer;
+    padding: 6px 16px; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px;
+    background: none; transition: all 0.2s;
+  }
+  .qr-overlay-close:hover { border-color: var(--accent); color: var(--accent); }
+  .qr-section { cursor: pointer; }
+  .qr-section:hover { border-color: rgba(0,212,255,0.4); background: rgba(0,0,0,0.3); }
+</style>
+</head>
+<body>
+
+<div class="particles" id="particles"></div>
+<div class="copied-toast" id="toast">COPIED ✓</div>
+
+<div class="card-wrapper">
+  <div class="card-border">
+    <div class="card">
+
+      <div class="card-header">
+        <div class="sys-id">DIGITAL BUSINESS CARD</div>
+        <div class="profile-row">
+          <div class="avatar-wrap">
+            <div class="avatar-ring"></div>
+            <img class="avatar" src="<%= card.profile_image || '' %>" alt="<%= card.name_en %>" onerror="this.style.background='linear-gradient(135deg,#0a2040,#0a4080)';this.src=''">
+            <div class="avatar-status"></div>
+          </div>
+          <div class="profile-info">
+            <% if (card.name_th) { %><div class="name-th"><%= card.name_th %></div><% } %>
+            <div class="name-en"><%= card.name_en %></div>
+            <% if (card.title) { %><div class="title-badge"><%= card.title.toUpperCase() %></div><% } %>
+          </div>
+        </div>
+      </div>
+
+      <div class="circuit-divider">
+        <svg viewBox="0 0 480 24" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+          <line x1="0" y1="12" x2="120" y2="12" stroke="#1a3060" stroke-width="1"/>
+          <circle cx="120" cy="12" r="3" fill="var(--accent)" opacity="0.6"/>
+          <line x1="123" y1="12" x2="180" y2="12" stroke="var(--accent)" stroke-width="1" opacity="0.4"/>
+          <rect x="180" y="7" width="10" height="10" rx="2" fill="none" stroke="var(--accent)" stroke-width="1" opacity="0.5"/>
+          <line x1="190" y1="12" x2="240" y2="12" stroke="var(--accent)" stroke-width="1" opacity="0.4"/>
+          <circle cx="240" cy="12" r="4" fill="var(--accent2)" opacity="0.7"/>
+          <line x1="244" y1="12" x2="300" y2="12" stroke="var(--accent)" stroke-width="1" opacity="0.4"/>
+          <rect x="300" y="7" width="10" height="10" rx="2" fill="none" stroke="var(--accent)" stroke-width="1" opacity="0.5"/>
+          <line x1="310" y1="12" x2="360" y2="12" stroke="var(--accent)" stroke-width="1" opacity="0.4"/>
+          <circle cx="360" cy="12" r="3" fill="var(--accent3)" opacity="0.6"/>
+          <line x1="363" y1="12" x2="480" y2="12" stroke="#1a3060" stroke-width="1"/>
+          <line x1="100" y1="8" x2="100" y2="16" stroke="#1a3060" stroke-width="1"/>
+          <line x1="200" y1="6" x2="200" y2="18" stroke="var(--accent)" stroke-width="1" opacity="0.3"/>
+          <line x1="380" y1="8" x2="380" y2="16" stroke="#1a3060" stroke-width="1"/>
+        </svg>
+      </div>
+
+      <% if (card.company_th || card.company_en) { %>
+      <div class="company-section">
+        <% if (card.company_th) { %><div class="company-name-th"><%= card.company_th %></div><% } %>
+        <% if (card.company_en) { %><div class="company-name-en"><%= card.company_en %></div><% } %>
+      </div>
+      <% } %>
+
+      <div class="contacts">
+        <% if (card.mobile) { %>
+        <a class="contact-item" href="tel:<%= card.mobile %>" onclick="copyToClipboard('<%= card.mobile %>')">
+          <div class="contact-icon">📱</div>
+          <div class="contact-text">
+            <div class="contact-label">MOBILE</div>
+            <div class="contact-value"><%= card.mobile %></div>
+          </div>
+          <div class="contact-arrow">›</div>
+        </a>
+        <% } %>
+
+        <% if (card.mobile2) { %>
+        <a class="contact-item" href="tel:<%= card.mobile2 %>" onclick="copyToClipboard('<%= card.mobile2 %>')">
+          <div class="contact-icon">📱</div>
+          <div class="contact-text">
+            <div class="contact-label">MOBILE 2</div>
+            <div class="contact-value"><%= card.mobile2 %></div>
+          </div>
+          <div class="contact-arrow">›</div>
+        </a>
+        <% } %>
+
+        <% if (card.office_phone) { %>
+        <a class="contact-item" href="tel:<%= card.office_phone.split('/')[0].trim().split(' ')[0] %>">
+          <div class="contact-icon">☎️</div>
+          <div class="contact-text">
+            <div class="contact-label">OFFICE TEL</div>
+            <div class="contact-value"><%= card.office_phone %></div>
+          </div>
+          <div class="contact-arrow">›</div>
+        </a>
+        <% } %>
+
+        <% if (card.email) { %>
+        <a class="contact-item" href="mailto:<%= card.email %>" onclick="copyToClipboard('<%= card.email %>')">
+          <div class="contact-icon">✉️</div>
+          <div class="contact-text">
+            <div class="contact-label">EMAIL</div>
+            <div class="contact-value"><%= card.email %></div>
+          </div>
+          <div class="contact-arrow">›</div>
+        </a>
+        <% } %>
+
+        <% if (card.website) { %>
+        <a class="contact-item" href="<%= card.website %>" target="_blank">
+          <div class="contact-icon">🌐</div>
+          <div class="contact-text">
+            <div class="contact-label">WEBSITE</div>
+            <div class="contact-value"><%= card.website.replace(/^https?:\/\//, '') %></div>
+          </div>
+          <div class="contact-arrow">›</div>
+        </a>
+        <% } %>
+
+        <% if (card.address) { %>
+        <div class="contact-item address-item">
+          <div class="contact-icon">📍</div>
+          <div class="contact-text">
+            <div class="contact-label">ADDRESS</div>
+            <div class="contact-value"><%= card.address %></div>
+          </div>
+        </div>
+        <% } %>
+      </div>
+
+      <% if (qrCodeSvg) { %>
+      <div class="qr-section" onclick="openQr()">
+        <div class="qr-box"><%- qrCodeSvg %></div>
+        <div class="qr-info">
+          <div class="qr-title">// DIGITAL CONTACT</div>
+          <div class="qr-desc">Tap QR to enlarge · Scan to save contact</div>
+        </div>
+      </div>
+      <div class="qr-overlay" id="qrOverlay" onclick="closeQr(event)">
+        <div class="qr-overlay-box"><%- qrCodeSvg %></div>
+        <div class="qr-overlay-text">SCAN TO CONNECT</div>
+        <button class="qr-overlay-close" onclick="closeQr(event)">✕ CLOSE</button>
+      </div>
+      <% } %>
+
+      <div class="actions">
+        <button class="btn btn-primary" onclick="saveContact()">
+          <span>⊕</span> ADD CONTACT
+        </button>
+        <button class="btn btn-secondary" onclick="shareCard()">
+          <span>⇗</span> SHARE CARD
+        </button>
+      </div>
+
+      <div class="card-footer">
+        <div class="footer-brand"><%= card.company_en ? card.company_en.toUpperCase() : 'E-BUSINESS CARD' %> © <%= new Date().getFullYear() %></div>
+        <div class="scan-badge">
+          <div class="pulse-dot"></div>
+          SECURE · VERIFIED
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  // Particles
+  const container = document.getElementById('particles');
+  for (let i = 0; i < 25; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.width = p.style.height = (Math.random() * 2 + 1) + 'px';
+    p.style.animationDuration = (Math.random() * 15 + 10) + 's';
+    p.style.animationDelay = (Math.random() * 15) + 's';
+    if (Math.random() > 0.5) p.style.background = 'var(--accent2)';
+    if (Math.random() > 0.7) p.style.background = 'var(--accent3)';
+    container.appendChild(p);
+  }
+
+  function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).catch(() => {});
+    const toast = document.getElementById('toast');
+    toast.textContent = 'COPIED ✓';
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2000);
+  }
+
+  function saveContact() {
+    const nameParts = '<%= card.name_en %>'.split(' ');
+    const lastName = nameParts.pop();
+    const firstName = nameParts.join(' ');
+    const vcard = [
+      'BEGIN:VCARD',
+      'VERSION:3.0',
+      'N:' + lastName + ';' + firstName + ';;;',
+      'FN:<%= card.name_en %>',
+      '<%= card.company_en ? "ORG:" + card.company_en : "" %>',
+      '<%= card.title ? "TITLE:" + card.title : "" %>',
+      '<%= card.mobile ? "TEL;TYPE=CELL:" + card.mobile : "" %>',
+      '<%= card.mobile2 ? "TEL;TYPE=CELL:" + card.mobile2 : "" %>',
+      '<%= card.office_phone ? "TEL;TYPE=WORK:" + card.office_phone.split("/")[0].trim() : "" %>',
+      '<%= card.email ? "EMAIL;TYPE=WORK:" + card.email : "" %>',
+      '<%= card.website ? "URL:" + card.website : "" %>',
+      '<%= card.address ? "ADR;TYPE=WORK:;;" + card.address.replace(/,/g, ";") : "" %>',
+      'END:VCARD'
+    ].filter(line => line && !line.endsWith(':')).join('\r\n');
+
+    const blob = new Blob([vcard], { type: 'text/vcard' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = '<%= card.name_en.toLowerCase().replace(/\\s+/g, "_") %>.vcf';
+    a.click();
+    URL.revokeObjectURL(url);
+    const toast = document.getElementById('toast');
+    toast.textContent = 'CONTACT SAVED ✓';
+    toast.classList.add('show');
+    setTimeout(() => { toast.classList.remove('show'); toast.textContent = 'COPIED ✓'; }, 2500);
+  }
+
+  function openQr() {
+    document.getElementById('qrOverlay').classList.add('show');
+  }
+  function closeQr(e) {
+    if (e.target.id === 'qrOverlay' || e.target.classList.contains('qr-overlay-close')) {
+      document.getElementById('qrOverlay').classList.remove('show');
+    }
+  }
+
+  function shareCard() {
+    if (navigator.share) {
+      navigator.share({
+        title: '<%= card.name_en %><%= card.title ? " – " + card.title : "" %>',
+        text: '<%= card.company_en ? card.company_en + "\\n" : "" %><%= card.mobile ? "Tel: " + card.mobile + "\\n" : "" %><%= card.email ? "Email: " + card.email : "" %>',
+        url: window.location.href
+      }).catch(() => {});
+    } else {
+      copyToClipboard(window.location.href);
+      const toast = document.getElementById('toast');
+      toast.textContent = 'LINK COPIED ✓';
+      toast.classList.add('show');
+      setTimeout(() => { toast.classList.remove('show'); toast.textContent = 'COPIED ✓'; }, 2500);
+    }
+  }
+</script>
+</body>
+</html>

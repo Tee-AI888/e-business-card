@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admins – E-Card Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@300;400;600;700&family=Barlow+Condensed:wght@700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+  <%- include('../partials/sidebar') %>
+  <main class="main-content">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Admin Users</h1>
+        <p class="page-subtitle"><%= admins.length %> admin<%= admins.length !== 1 ? 's' : '' %> registered</p>
+      </div>
+      <div class="header-actions">
+        <a href="/admin/admins/new" class="btn btn-primary">⊕ NEW ADMIN</a>
+      </div>
+    </div>
+
+    <% if (typeof error !== 'undefined' && error) { %>
+      <div class="alert alert-error">⚠ <%= error %></div>
+    <% } %>
+    <% if (typeof success !== 'undefined' && success) { %>
+      <div class="alert alert-success">✓ <%= success %></div>
+    <% } %>
+
+    <% if (admins.length === 0) { %>
+      <div class="empty-state">
+        <div class="empty-icon">👤</div>
+        <p>No admin users found</p>
+      </div>
+    <% } else { %>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Username</th>
+              <th>Display Name</th>
+              <th>Email</th>
+              <th>Status</th>
+              <th>Last Login</th>
+              <th>Created</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% admins.forEach(function(a) { %>
+            <tr>
+              <td><strong><%= a.username %></strong></td>
+              <td><%= a.display_name || '—' %></td>
+              <td><%= a.email || '—' %></td>
+              <td>
+                <% if (a.is_active) { %>
+                  <span class="badge" style="background:rgba(0,255,157,0.15);color:#00ff9d;">Active</span>
+                <% } else { %>
+                  <span class="badge" style="background:rgba(255,71,87,0.15);color:#ff4757;">Inactive</span>
+                <% } %>
+              </td>
+              <td style="font-size:12px;color:var(--text-dim);"><%= a.last_login || 'Never' %></td>
+              <td style="font-size:12px;color:var(--text-dim);"><%= a.created_at %></td>
+              <td>
+                <a href="/admin/admins/<%= a.id %>/edit" class="btn btn-sm btn-secondary">Edit</a>
+              </td>
+            </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+  </main>
+</body>
+</html>

@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Piyawat Khaoluang – Head of IT Solution Delivery</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@300;400;600;700&family=Barlow+Condensed:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050d1a;
+    --panel: #080f1e;
+    --card: #0a1628;
+    --border: #1a3060;
+    --accent: #00d4ff;
+    --accent2: #0066ff;
+    --accent3: #00ff9d;
+    --gold: #ffc857;
+    --text: #c8daf0;
+    --text-dim: #4a6a8a;
+    --mono: 'Share Tech Mono', monospace;
+    --sans: 'Barlow', sans-serif;
+    --cond: 'Barlow Condensed', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    font-family: var(--sans);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow-x: hidden;
+  }
+
+  /* Animated grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    animation: gridPulse 8s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  @keyframes gridPulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+
+  /* Floating particles */
+  .particles {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+  .particle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: float linear infinite;
+    opacity: 0;
+  }
+  @keyframes float {
+    0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+    10% { opacity: 0.6; }
+    90% { opacity: 0.3; }
+    100% { transform: translateY(-100px) translateX(30px); opacity: 0; }
+  }
+
+  /* Card wrapper */
+  .card-wrapper {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 480px;
+    animation: cardReveal 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  @keyframes cardReveal {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Glowing border */
+  .card-border {
+    position: relative;
+    border-radius: 20px;
+    padding: 2px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2), var(--accent3), var(--accent));
+    background-size: 300% 300%;
+    animation: borderGlow 4s ease infinite;
+    box-shadow:
+      0 0 30px rgba(0,212,255,0.2),
+      0 0 60px rgba(0,102,255,0.1),
+      0 20px 60px rgba(0,0,0,0.6);
+  }
+
+  @keyframes borderGlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .card {
+    background: var(--card);
+    border-radius: 18px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Top header band */
+  .card-header {
+    position: relative;
+    background: linear-gradient(135deg, #040d1e 0%, #071428 50%, #040d1e 100%);
+    padding: 32px 28px 28px;
+    overflow: hidden;
+  }
+
+  .card-header::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(0,212,255,0.12) 0%, transparent 70%);
+    border-radius: 50%;
+    transform: translate(40%, -40%);
+  }
+
+  .card-header::after {
+    content: 'NYK';
+    position: absolute;
+    bottom: -20px; right: 24px;
+    font-family: var(--cond);
+    font-size: 80px;
+    font-weight: 800;
+    color: rgba(0,212,255,0.04);
+    letter-spacing: 4px;
+    user-select: none;
+  }
+
+  /* System ID tag */
+  .sys-id {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent3);
+    letter-spacing: 3px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    animation: fadeIn 0.5s 0.3s both;
+  }
+  .sys-id::before {
+    content: '';
+    width: 20px; height: 1px;
+    background: var(--accent3);
+  }
+
+  /* Profile section */
+  .profile-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 20px;
+    position: relative;
+    z-index: 1;
+    animation: fadeIn 0.5s 0.4s both;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .avatar-wrap {
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .avatar-ring {
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    background: linear-gradient(135deg, var(--accent), var(--accent3)) border-box;
+    -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: destination-out;
+    mask-composite: exclude;
+    animation: rotateSlow 8s linear infinite;
+  }
+  @keyframes rotateSlow {
+    to { transform: rotate(360deg); }
+  }
+
+  .avatar {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: top;
+    display: block;
+    filter: brightness(1.05) contrast(1.05);
+    border: 3px solid var(--bg);
+  }
+
+  .avatar-status {
+    position: absolute;
+    bottom: 2px; right: 2px;
+    width: 14px; height: 14px;
+    background: var(--accent3);
+    border-radius: 50%;
+    border: 2px solid var(--bg);
+    box-shadow: 0 0 8px var(--accent3);
+  }
+
+  .profile-info { flex: 1; }
+
+  .name-th {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 20px;
+    color: white;
+    line-height: 1.2;
+    margin-bottom: 3px;
+  }
+
+  .name-en {
+    font-family: var(--cond);
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--accent);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .title-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(0,212,255,0.08);
+    border: 1px solid rgba(0,212,255,0.25);
+    border-radius: 4px;
+    padding: 3px 10px;
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--accent);
+    letter-spacing: 1px;
+  }
+  .title-badge::before {
+    content: '▶';
+    font-size: 7px;
+  }
+
+  /* Divider with circuit lines */
+  .circuit-divider {
+    position: relative;
+    height: 24px;
+    margin: 0;
+    overflow: visible;
+    animation: fadeIn 0.5s 0.5s both;
+  }
+  .circuit-divider svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Company section */
+  .company-section {
+    padding: 0 28px 20px;
+    animation: fadeIn 0.5s 0.55s both;
+  }
+
+  .company-name-th {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--gold);
+    margin-bottom: 2px;
+  }
+
+  .company-name-en {
+    font-family: var(--cond);
+    font-weight: 700;
+    font-size: 17px;
+    color: white;
+    letter-spacing: 1px;
+  }
+
+  /* Contact section */
+  .contacts {
+    padding: 0 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    animation: fadeIn 0.5s 0.6s both;
+  }
+
+  .contact-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(26,48,96,0.6);
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .contact-item::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--accent2);
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+
+  .contact-item:hover {
+    background: rgba(0,102,255,0.08);
+    border-color: rgba(0,212,255,0.3);
+    transform: translateX(4px);
+  }
+  .contact-item:hover::before { opacity: 1; }
+
+  .contact-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: rgba(0,212,255,0.08);
+    border: 1px solid rgba(0,212,255,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 14px;
+    transition: all 0.25s;
+  }
+
+  .contact-item:hover .contact-icon {
+    background: rgba(0,212,255,0.15);
+    box-shadow: 0 0 12px rgba(0,212,255,0.3);
+  }
+
+  .contact-text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .contact-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+
+  .contact-value {
+    font-size: 13px;
+    color: var(--text);
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .contact-arrow {
+    font-size: 10px;
+    color: var(--text-dim);
+    transition: color 0.25s, transform 0.25s;
+  }
+  .contact-item:hover .contact-arrow {
+    color: var(--accent);
+    transform: translateX(3px);
+  }
+
+  /* Action buttons */
+  .actions {
+    padding: 0 20px 28px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    animation: fadeIn 0.5s 0.7s both;
+  }
+
+  .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
+    border-radius: 10px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: none;
+    transition: all 0.25s ease;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    color: var(--bg);
+    box-shadow: 0 0 20px rgba(0,212,255,0.25);
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(0,212,255,0.4);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid rgba(0,212,255,0.35);
+  }
+  .btn-secondary:hover {
+    background: rgba(0,212,255,0.08);
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,212,255,0.15);
+  }
+
+  /* Footer */
+  .card-footer {
+    border-top: 1px solid var(--border);
+    padding: 14px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    animation: fadeIn 0.5s 0.75s both;
+  }
+
+  .footer-brand {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+  }
+
+  .scan-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--accent3);
+    letter-spacing: 1px;
+  }
+
+  .pulse-dot {
+    width: 6px; height: 6px;
+    background: var(--accent3);
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(0,255,157,0.4); }
+    50% { box-shadow: 0 0 0 5px rgba(0,255,157,0); }
+  }
+
+  /* QR placeholder */
+  .qr-section {
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: rgba(0,0,0,0.2);
+    animation: fadeIn 0.5s 0.65s both;
+    margin: 0 20px 16px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+
+  .qr-box {
+    width: 70px;
+    height: 70px;
+    border-radius: 8px;
+    border: 1px solid rgba(0,212,255,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    color: var(--text-dim);
+    font-family: var(--mono);
+    letter-spacing: 1px;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+    background: rgba(0,212,255,0.03);
+  }
+  /* QR corner markers */
+  .qr-corner {
+    position: absolute;
+    width: 12px; height: 12px;
+    border: 2px solid var(--accent);
+  }
+  .qr-corner.tl { top: 4px; left: 4px; border-right: none; border-bottom: none; }
+  .qr-corner.tr { top: 4px; right: 4px; border-left: none; border-bottom: none; }
+  .qr-corner.bl { bottom: 4px; left: 4px; border-right: none; border-top: none; }
+  .qr-corner.br { bottom: 4px; right: 4px; border-left: none; border-top: none; }
+
+  /* QR dots simulation */
+  .qr-dots {
+    display: grid;
+    grid-template-columns: repeat(6, 6px);
+    gap: 2px;
+  }
+  .qr-dot {
+    width: 6px; height: 6px;
+    border-radius: 1px;
+    background: var(--accent);
+    opacity: 0;
+    animation: dotIn 0.1s ease forwards;
+  }
+
+  .qr-info { flex: 1; }
+  .qr-title {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--accent3);
+    letter-spacing: 2px;
+    margin-bottom: 5px;
+  }
+  .qr-desc {
+    font-size: 11px;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  /* Scanline effect */
+  .card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    animation: scanline 4s linear infinite;
+    pointer-events: none;
+    z-index: 10;
+    opacity: 0.5;
+  }
+
+  @keyframes scanline {
+    0% { top: 0; opacity: 0; }
+    5% { opacity: 0.5; }
+    95% { opacity: 0.3; }
+    100% { top: 100%; opacity: 0; }
+  }
+
+  /* Tooltip for copy */
+  .copied-toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: var(--accent3);
+    color: var(--bg);
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 8px 18px;
+    border-radius: 20px;
+    letter-spacing: 2px;
+    opacity: 0;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    z-index: 100;
+  }
+  .copied-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .address-item .contact-value {
+    white-space: normal;
+    font-size: 11px;
+    line-height: 1.4;
+  }
+</style>
+</head>
+<body>
+
+<!-- Particles -->
+<div class="particles" id="particles"></div>
+
+<!-- Toast -->
+<div class="copied-toast" id="toast">COPIED ✓</div>
+
+<div class="card-wrapper">
+  <div class="card-border">
+    <div class="card">
+
+      <!-- Header -->
+      <div class="card-header">
+        <div class="sys-id">DIGITAL BUSINESS CARD · NYK-GROUP</div>
+        <div class="profile-row">
+          <div class="avatar-wrap">
+            <div class="avatar-ring"></div>
+            <img class="avatar" src="Profile/profile.jpg" alt="Piyawat Khaoluang" onerror="this.style.background='linear-gradient(135deg,#0a2040,#0a4080)';this.src=''">
+            <div class="avatar-status"></div>
+          </div>
+          <div class="profile-info">
+            <div class="name-th">ปิยวัชร ขาวเหลือง</div>
+            <div class="name-en">Piyawat Khaoluang</div>
+            <div class="title-badge">HEAD OF IT SOLUTION DELIVERY</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Circuit Divider -->
+      <div class="circuit-divider">
+        <svg viewBox="0 0 480 24" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+          <line x1="0" y1="12" x2="120" y2="12" stroke="#1a3060" stroke-width="1"/>
+          <circle cx="120" cy="12" r="3" fill="#00d4ff" opacity="0.6"/>
+          <line x1="123" y1="12" x2="180" y2="12" stroke="#00d4ff" stroke-width="1" opacity="0.4"/>
+          <rect x="180" y="7" width="10" height="10" rx="2" fill="none" stroke="#00d4ff" stroke-width="1" opacity="0.5"/>
+          <line x1="190" y1="12" x2="240" y2="12" stroke="#00d4ff" stroke-width="1" opacity="0.4"/>
+          <circle cx="240" cy="12" r="4" fill="#0066ff" opacity="0.7"/>
+          <line x1="244" y1="12" x2="300" y2="12" stroke="#00d4ff" stroke-width="1" opacity="0.4"/>
+          <rect x="300" y="7" width="10" height="10" rx="2" fill="none" stroke="#00d4ff" stroke-width="1" opacity="0.5"/>
+          <line x1="310" y1="12" x2="360" y2="12" stroke="#00d4ff" stroke-width="1" opacity="0.4"/>
+          <circle cx="360" cy="12" r="3" fill="#00ff9d" opacity="0.6"/>
+          <line x1="363" y1="12" x2="480" y2="12" stroke="#1a3060" stroke-width="1"/>
+          <!-- Vertical ticks -->
+          <line x1="100" y1="8" x2="100" y2="16" stroke="#1a3060" stroke-width="1"/>
+          <line x1="200" y1="6" x2="200" y2="18" stroke="#00d4ff" stroke-width="1" opacity="0.3"/>
+          <line x1="380" y1="8" x2="380" y2="16" stroke="#1a3060" stroke-width="1"/>
+        </svg>
+      </div>
+
+      <!-- Company -->
+      <div class="company-section">
+        <div class="company-name-th">บริษัท นันยางการทออุตสาหกรรม จำกัด</div>
+        <div class="company-name-en">Nan Yang Knitting Factory Co., Ltd.</div>
+      </div>
+
+      <!-- Contacts -->
+      <div class="contacts">
+        <a class="contact-item" href="tel:+6625938162" onclick="copyToClipboard('+6625938162')">
+          <div class="contact-icon">📱</div>
+          <div class="contact-text">
+            <div class="contact-label">MOBILE</div>
+            <div class="contact-value">(666) 5938 6162</div>
+          </div>
+          <div class="contact-arrow">›</div>
+        </a>
+
+        <a class="contact-item" href="tel:+6624212150">
+          <div class="contact-icon">☎️</div>
+          <div class="contact-text">
+            <div class="contact-label">OFFICE TEL</div>
+            <div class="contact-value">(662) 421-2150 / 421-2160 Ext. 1630</div>
+          </div>
+          <div class="contact-arrow">›</div>
+        </a>
+
+        <a class="contact-item" href="mailto:piyawat.k@nanyangtextile.com" onclick="copyToClipboard('piyawat.k@nanyangtextile.com')">
+          <div class="contact-icon">✉️</div>
+          <div class="contact-text">
+            <div class="contact-label">EMAIL</div>
+            <div class="contact-value">piyawat.k@nanyangtextile.com</div>
+          </div>
+          <div class="contact-arrow">›</div>
+        </a>
+
+        <a class="contact-item" href="https://www.nanyangtextile.com" target="_blank">
+          <div class="contact-icon">🌐</div>
+          <div class="contact-text">
+            <div class="contact-label">WEBSITE</div>
+            <div class="contact-value">www.nanyangtextile.com</div>
+          </div>
+          <div class="contact-arrow">›</div>
+        </a>
+
+        <div class="contact-item address-item">
+          <div class="contact-icon">📍</div>
+          <div class="contact-text">
+            <div class="contact-label">ADDRESS</div>
+            <div class="contact-value">Nan Yang Textile Building, 27 Phetkasem Rd., Nongkangploo, Nongkham, Bangkok 10160, Thailand</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- QR placeholder -->
+      <div class="qr-section">
+        <div class="qr-box" id="qrBox">
+          <div class="qr-corner tl"></div>
+          <div class="qr-corner tr"></div>
+          <div class="qr-corner bl"></div>
+          <div class="qr-corner br"></div>
+          <div class="qr-dots" id="qrDots"></div>
+        </div>
+        <div class="qr-info">
+          <div class="qr-title">// DIGITAL CONTACT</div>
+          <div class="qr-desc">Save contact directly to your device by tapping "Add Contact" below</div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="actions">
+        <button class="btn btn-primary" onclick="saveContact()">
+          <span>⊕</span> ADD CONTACT
+        </button>
+        <button class="btn btn-secondary" onclick="shareCard()">
+          <span>⇗</span> SHARE CARD
+        </button>
+      </div>
+
+      <!-- Footer -->
+      <div class="card-footer">
+        <div class="footer-brand">NAN YANG TEXTILE GROUP © 2025</div>
+        <div class="scan-badge">
+          <div class="pulse-dot"></div>
+          SECURE · VERIFIED
+        </div>
+      </div>
+
+    </div><!-- .card -->
+  </div><!-- .card-border -->
+</div><!-- .card-wrapper -->
+
+<script>
+  // Generate particles
+  const container = document.getElementById('particles');
+  for (let i = 0; i < 25; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.width = p.style.height = (Math.random() * 2 + 1) + 'px';
+    p.style.animationDuration = (Math.random() * 15 + 10) + 's';
+    p.style.animationDelay = (Math.random() * 15) + 's';
+    if (Math.random() > 0.5) p.style.background = '#0066ff';
+    if (Math.random() > 0.7) p.style.background = '#00ff9d';
+    container.appendChild(p);
+  }
+
+  // Generate QR-like dots animation
+  const qrDots = document.getElementById('qrDots');
+  const pattern = [1,0,1,1,0,1, 0,1,0,0,1,0, 1,1,1,0,1,1, 0,0,1,1,0,0, 1,0,0,1,1,0, 1,1,0,0,1,1];
+  pattern.forEach((on, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'qr-dot';
+    if (on) {
+      dot.style.animationDelay = (i * 0.03 + 0.8) + 's';
+      dot.style.opacity = '0';
+      setTimeout(() => { dot.style.opacity = (Math.random() * 0.4 + 0.6).toString(); }, (i * 30) + 800);
+    } else {
+      dot.style.background = 'transparent';
+    }
+    qrDots.appendChild(dot);
+  });
+
+  function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).catch(() => {});
+    const toast = document.getElementById('toast');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2000);
+  }
+
+  function saveContact() {
+    const vcard = `BEGIN:VCARD\r\nVERSION:3.0\r\nN:Khaoluang;Piyawat;;;\r\nFN:Piyawat Khaoluang\r\nORG:Nan Yang Knitting Factory Co., Ltd.\r\nTITLE:Head of IT Solution Delivery\r\nTEL;TYPE=CELL:+66659386162\r\nTEL;TYPE=WORK:+6624212150\r\nEMAIL;TYPE=WORK:piyawat.k@nanyangtextile.com\r\nURL:https://www.nanyangtextile.com\r\nADR;TYPE=WORK:;;27 Phetkasem Rd. Nongkangploo;Nongkham;Bangkok;10160;Thailand\r\nEND:VCARD`;
+    const blob = new Blob([vcard], { type: 'text/vcard' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'piyawat_khaoluang.vcf';
+    a.click();
+    URL.revokeObjectURL(url);
+    const toast = document.getElementById('toast');
+    toast.textContent = 'CONTACT SAVED ✓';
+    toast.classList.add('show');
+    setTimeout(() => { toast.classList.remove('show'); toast.textContent = 'COPIED ✓'; }, 2500);
+  }
+
+  function shareCard() {
+    if (navigator.share) {
+      navigator.share({
+        title: 'Piyawat Khaoluang – Head of IT Solution Delivery',
+        text: 'Nan Yang Knitting Factory Co., Ltd.\nTel: (666) 5938-6162\nEmail: piyawat.k@nanyangtextile.com',
+        url: window.location.href
+      }).catch(() => {});
+    } else {
+      copyToClipboard(window.location.href);
+      const toast = document.getElementById('toast');
+      toast.textContent = 'LINK COPIED ✓';
+      toast.classList.add('show');
+      setTimeout(() => { toast.classList.remove('show'); toast.textContent = 'COPIED ✓'; }, 2500);
+    }
+  }
+</script>
+</body>
+</html>

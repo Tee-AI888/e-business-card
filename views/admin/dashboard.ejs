@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard – E-Card Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@300;400;600;700&family=Barlow+Condensed:wght@700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+  <%- include('../partials/sidebar') %>
+  <main class="main-content">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Dashboard</h1>
+        <p class="page-subtitle">Overview of your e-business card system</p>
+      </div>
+      <div class="header-actions">
+        <a href="/admin/cards/new" class="btn btn-primary">⊕ NEW CARD</a>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">🃏</div>
+        <div class="stat-info">
+          <div class="stat-value"><%= cardCount %></div>
+          <div class="stat-label">ACTIVE CARDS</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🎨</div>
+        <div class="stat-info">
+          <div class="stat-value"><%= themeCount %></div>
+          <div class="stat-label">THEMES</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">👁</div>
+        <div class="stat-info">
+          <div class="stat-value"><%= totalViews %></div>
+          <div class="stat-label">TOTAL VIEWS</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Cards -->
+    <div class="section-header">
+      <h2 class="section-title">Recent Cards</h2>
+      <a href="/admin/cards" class="section-link">View All →</a>
+    </div>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Title</th>
+            <th>Theme</th>
+            <th>Views</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (recentCards.length === 0) { %>
+            <tr><td colspan="6" class="empty-state">No cards yet. Create your first card!</td></tr>
+          <% } %>
+          <% recentCards.forEach(card => { %>
+          <tr>
+            <td>
+              <div class="name-cell">
+                <strong><%= card.name_en %></strong>
+                <% if (card.name_th) { %><small><%= card.name_th %></small><% } %>
+              </div>
+            </td>
+            <td><%= card.title || '—' %></td>
+            <td><span class="badge"><%= card.theme_name %></span></td>
+            <td><%= card.view_count %></td>
+            <td>
+              <span class="status-badge <%= card.is_active ? 'active' : 'inactive' %>">
+                <%= card.is_active ? 'Active' : 'Inactive' %>
+              </span>
+            </td>
+            <td>
+              <div class="action-btns">
+                <a href="/card/<%= card.uuid %>" target="_blank" class="action-btn" title="View">👁</a>
+                <a href="/admin/cards/<%= card.id %>/edit" class="action-btn" title="Edit">✏️</a>
+              </div>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="quick-links">
+      <a href="/admin/cards/new" class="quick-link-card">
+        <div class="ql-icon">🃏</div>
+        <div class="ql-text">Create New Card</div>
+      </a>
+      <a href="/admin/themes" class="quick-link-card">
+        <div class="ql-icon">🎨</div>
+        <div class="ql-text">Manage Themes</div>
+      </a>
+      <a href="/admin/themes/new" class="quick-link-card">
+        <div class="ql-icon">✨</div>
+        <div class="ql-text">Create Custom Theme</div>
+      </a>
+    </div>
+  </main>
+</body>
+</html>

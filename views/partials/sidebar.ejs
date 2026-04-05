@@ -1,0 +1,37 @@
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-brand">
+      <span class="brand-icon">⚡</span>
+      <span class="brand-text">E-CARD</span>
+    </div>
+    <div class="sidebar-sub">MANAGEMENT SYSTEM</div>
+  </div>
+  <div class="sidebar-nav">
+    <a href="/admin" class="nav-item<%= typeof cardCount !== 'undefined' && typeof search === 'undefined' && typeof card === 'undefined' && typeof themes === 'undefined' && typeof theme === 'undefined' ? ' active' : '' %>">
+      <span class="nav-icon">📊</span> Dashboard
+    </a>
+    <a href="/admin/cards" class="nav-item<%= typeof search !== 'undefined' || (typeof card !== 'undefined' && typeof themes !== 'undefined') ? ' active' : '' %>">
+      <span class="nav-icon">🃏</span> Cards
+    </a>
+    <a href="/admin/themes" class="nav-item<%= (typeof themes !== 'undefined' && typeof search === 'undefined' && typeof card === 'undefined') || (typeof theme !== 'undefined' && typeof systemThemes !== 'undefined') ? ' active' : '' %>">
+      <span class="nav-icon">🎨</span> Themes
+    </a>
+    <a href="/admin/companies" class="nav-item<%= typeof companyPage !== 'undefined' || (typeof company !== 'undefined' && typeof card === 'undefined' && typeof theme === 'undefined') ? ' active' : '' %>">
+      <span class="nav-icon">🏢</span> Companies
+    </a>
+    <a href="/admin/admins" class="nav-item<%= typeof adminPage !== 'undefined' ? ' active' : '' %>">
+      <span class="nav-icon">👤</span> Admins
+    </a>
+  </div>
+  <div class="sidebar-footer">
+    <a href="/admin/account" class="nav-item<%= typeof accountPage !== 'undefined' ? ' active' : '' %>" style="font-size:12px;">
+      <span class="nav-icon">⚙️</span> <%= typeof adminDisplayName !== 'undefined' ? adminDisplayName : (typeof adminUsername !== 'undefined' ? adminUsername : 'Account') %>
+    </a>
+    <form method="POST" action="/api/auth/logout" class="logout-form">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <button type="submit" class="nav-item logout-btn">
+        <span class="nav-icon">🚪</span> Logout
+      </button>
+    </form>
+  </div>
+</nav>

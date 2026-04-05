@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Companies – E-Card Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@300;400;600;700&family=Barlow+Condensed:wght@700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+  <%- include('../partials/sidebar') %>
+  <main class="main-content">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Companies</h1>
+        <p class="page-subtitle">Master data — manage company profiles for quick selection</p>
+      </div>
+      <div class="header-actions">
+        <a href="/admin/companies/new" class="btn btn-primary">⊕ NEW COMPANY</a>
+      </div>
+    </div>
+
+    <% if (error) { %>
+      <div class="alert alert-error">⚠ <%= error %></div>
+    <% } %>
+
+    <% if (companies.length === 0) { %>
+      <div class="empty-state">
+        <div class="empty-icon">🏢</div>
+        <h3>No companies yet</h3>
+        <p>Create a company to quickly fill card details</p>
+        <a href="/admin/companies/new" class="btn btn-primary">⊕ NEW COMPANY</a>
+      </div>
+    <% } else { %>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Company Name (EN)</th>
+              <th>Company Name (TH)</th>
+              <th>Address</th>
+              <th>Cards</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% companies.forEach(c => { %>
+              <tr>
+                <td><strong><%= c.name_en %></strong></td>
+                <td><%= c.name_th || '—' %></td>
+                <td style="max-width:300px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="<%= c.address || '' %>"><%= c.address || '—' %></td>
+                <td><span class="badge"><%= c.card_count %></span></td>
+                <td>
+                  <a href="/admin/companies/<%= c.id %>/edit" class="btn btn-sm btn-secondary">Edit</a>
+                  <form method="POST" action="/api/companies/<%= c.id %>/delete" style="display:inline" onsubmit="return confirm('Delete this company?')">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                  </form>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+  </main>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><%= company && company.id ? 'Edit' : 'New' %> Company – E-Card Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@300;400;600;700&family=Barlow+Condensed:wght@700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+  <%- include('../partials/sidebar') %>
+  <main class="main-content">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title"><%= company && company.id ? 'Edit' : 'New' %> Company</h1>
+        <p class="page-subtitle">
+          <% if (company && company.id) { %>
+            Editing: <%= company.name_en %>
+          <% } else { %>
+            Add a new company for quick selection in card forms
+          <% } %>
+        </p>
+      </div>
+      <div class="header-actions">
+        <a href="/admin/companies" class="btn btn-ghost">← BACK</a>
+      </div>
+    </div>
+
+    <% if (error) { %>
+      <div class="alert alert-error">⚠ <%= error %></div>
+    <% } %>
+
+    <form
+      method="POST"
+      action="<%= company && company.id ? '/api/companies/' + company.id + '/update' : '/api/companies' %>"
+      class="card-form"
+    >
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+      <div class="form-grid">
+        <div class="form-section">
+          <h3 class="form-section-title">Company Information</h3>
+
+          <div class="form-group">
+            <label class="form-label">Company Name (English) *</label>
+            <input class="form-input" type="text" name="name_en" value="<%= company ? (company.name_en || '') : '' %>" required placeholder="e.g. Acme Corp Co., Ltd.">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Company Name (Thai)</label>
+            <input class="form-input" type="text" name="name_th" value="<%= company ? (company.name_th || '') : '' %>" placeholder="e.g. บริษัท แอคมี่ จำกัด">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Office Phone</label>
+            <input class="form-input" type="text" name="office_phone" value="<%= company ? (company.office_phone || '') : '' %>" placeholder="e.g. +6624212150 Ext. 1630">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Website</label>
+            <input class="form-input" type="text" name="website" value="<%= company ? (company.website || '') : '' %>" placeholder="e.g. www.company.com">
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h3 class="form-section-title">Address</h3>
+
+          <div class="form-group">
+            <label class="form-label">Full Address</label>
+            <textarea class="form-input form-textarea" name="address" rows="5" placeholder="Full company address"><%= company ? (company.address || '') : '' %></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary btn-lg">
+          <%= company && company.id ? '✓ SAVE CHANGES' : '⊕ CREATE COMPANY' %>
+        </button>
+        <a href="/admin/companies" class="btn btn-ghost">CANCEL</a>
+      </div>
+    </form>
+
+    <% if (company && company.id) { %>
+    <div class="form-actions" style="margin-top:24px; flex-direction:column; align-items:flex-start;">
+      <h3 style="color:#ff4d6a; font-size:11px; font-family:var(--mono); letter-spacing:2px; text-transform:uppercase; margin-bottom:4px;">⚠ DANGER ZONE</h3>
+      <form method="POST" action="/api/companies/<%= company.id %>/delete" style="display:inline" onsubmit="return confirm('Are you sure you want to delete this company?')">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <button type="submit" class="btn btn-danger">🗑 DELETE COMPANY</button>
+      </form>
+    </div>
+    <% } %>
+  </main>
+</body>
+</html>

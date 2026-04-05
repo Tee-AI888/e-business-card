@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cards – E-Card Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@300;400;600;700&family=Barlow+Condensed:wght@700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+  <%- include('../partials/sidebar') %>
+  <main class="main-content">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Cards</h1>
+        <p class="page-subtitle">Manage all e-business cards</p>
+      </div>
+      <div class="header-actions">
+        <a href="/admin/cards/new" class="btn btn-primary">⊕ NEW CARD</a>
+      </div>
+    </div>
+
+    <!-- Search -->
+    <form class="search-bar" method="GET" action="/admin/cards">
+      <input type="text" name="search" value="<%= search %>" placeholder="Search by name, email, company..." class="search-input">
+      <button type="submit" class="btn btn-secondary">SEARCH</button>
+      <% if (search) { %>
+        <a href="/admin/cards" class="btn btn-ghost">CLEAR</a>
+      <% } %>
+    </form>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Profile</th>
+            <th>Name</th>
+            <th>Title / Company</th>
+            <th>Email</th>
+            <th>Theme</th>
+            <th>Views</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (cards.length === 0) { %>
+            <tr><td colspan="8" class="empty-state">No cards found. <a href="/admin/cards/new">Create one</a></td></tr>
+          <% } %>
+          <% cards.forEach(card => { %>
+          <tr class="<%= card.is_active ? '' : 'row-inactive' %>">
+            <td>
+              <% if (card.profile_image) { %>
+                <img class="table-avatar" src="<%= card.profile_image %>" alt="" onerror="this.style.display='none'">
+              <% } else { %>
+                <div class="table-avatar-placeholder"><%= card.name_en.charAt(0) %></div>
+              <% } %>
+            </td>
+            <td>
+              <div class="name-cell">
+                <strong><%= card.name_en %></strong>
+                <% if (card.name_th) { %><small><%= card.name_th %></small><% } %>
+              </div>
+            </td>
+            <td>
+              <div class="name-cell">
+                <span><%= card.title || '—' %></span>
+                <small><%= card.company_en || '' %></small>
+              </div>
+            </td>
+            <td><%= card.email || '—' %></td>
+            <td><span class="badge"><%= card.theme_name %></span></td>
+            <td><%= card.view_count %></td>
+            <td>
+              <span class="status-badge <%= card.is_active ? 'active' : 'inactive' %>">
+                <%= card.is_active ? 'Active' : 'Inactive' %>
+              </span>
+            </td>
+            <td>
+              <div class="action-btns">
+                <a href="/card/<%= card.uuid %>" target="_blank" class="action-btn" title="View card">👁</a>
+                <a href="/admin/cards/<%= card.id %>/edit" class="action-btn" title="Edit">✏️</a>
+                <% if (card.is_active) { %>
+                  <form method="POST" action="/api/cards/<%= card.id %>/delete" style="display:inline" onsubmit="return confirm('Deactivate this card?')">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <button type="submit" class="action-btn action-danger" title="Deactivate">🗑</button>
+                  </form>
+                <% } else { %>
+                  <form method="POST" action="/api/cards/<%= card.id %>/restore" style="display:inline">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <button type="submit" class="action-btn action-success" title="Restore">♻️</button>
+                  </form>
+                <% } %>
+              </div>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</body>
+</html>

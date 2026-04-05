@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><%= card.name_en %><%= card.title ? ' – ' + card.title : '' %></title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: <%= cssVars.bg || '#05070a' %>;
+    --panel: <%= cssVars.panel || 'rgba(12, 18, 30, 0.65)' %>;
+    --card: <%= cssVars.card || 'rgba(15, 23, 42, 0.4)' %>;
+    --border: <%= cssVars.border || 'rgba(0, 240, 255, 0.2)' %>;
+    --accent: <%= cssVars.accent || '#00f0ff' %>;
+    --accent2: <%= cssVars.accent2 || '#7000ff' %>;
+    --accent3: <%= cssVars.accent3 || '#ff007c' %>;
+    --gold: <%= cssVars.gold || '#ffb800' %>;
+    --text: <%= cssVars.text || '#e2e8f0' %>;
+    --text-dim: <%= cssVars.textDim || '#64748b' %>;
+    --mono: <%= cssVars.fontMono || "'Space Mono', monospace" %>;
+    --sans: <%= cssVars.fontSans || "'Rajdhani', sans-serif" %>;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: radial-gradient(circle at 50% 0%, #101528 0%, var(--bg) 80%);
+    font-family: var(--sans);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow-x: hidden;
+  }
+
+  /* Matrix Dot Background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: radial-gradient(rgba(0, 240, 255, 0.1) 1px, transparent 1px);
+    background-size: 30px 30px;
+    animation: drift 20s linear infinite;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  @keyframes drift {
+    from { background-position: 0 0; }
+    to { background-position: -60px 60px; }
+  }
+
+  .particles { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+  .particle {
+    position: absolute; width: 2px; height: 15px; background: linear-gradient(to bottom, transparent, var(--accent));
+    opacity: 0; animation: rain linear infinite;
+  }
+  @keyframes rain {
+    0% { transform: translateY(-100vh); opacity: 0; }
+    50% { opacity: 0.5; }
+    100% { transform: translateY(100vh); opacity: 0; }
+  }
+
+  .card-wrapper {
+    position: relative; z-index: 1; width: 100%; max-width: 480px;
+    animation: cardReveal 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0; transform: translateY(40px) scale(0.95);
+  }
+  @keyframes cardReveal { to { opacity: 1; transform: translateY(0) scale(1); } }
+
+  /* Glassmorphism Panel */
+  .card-border {
+    position: relative; padding: 1px;
+    background: linear-gradient(180deg, rgba(0,240,255,0.5) 0%, rgba(112,0,255,0.1) 50%, rgba(255,0,124,0.3) 100%);
+    clip-path: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+  }
+
+  .card { 
+    background: var(--card); 
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    clip-path: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px);
+    position: relative; 
+    overflow: hidden; 
+  }
+
+  .card-header {
+    position: relative;
+    padding: 35px 30px 25px; 
+    background: linear-gradient(90deg, rgba(0,240,255,0.05) 0%, transparent 100%);
+  }
+
+  .sys-id {
+    font-family: var(--mono); font-size: 10px; color: var(--accent);
+    letter-spacing: 2px; margin-bottom: 25px; display: flex;
+    align-items: center; gap: 8px; text-transform: uppercase;
+  }
+  .sys-id::before { content: 'STATUS: ACTIVE'; background: rgba(0,240,255,0.15); padding: 2px 6px; border-radius: 2px; }
+
+  .profile-row {
+    display: flex; align-items: center; gap: 24px;
+    position: relative; z-index: 1;
+  }
+
+  /* Hexagon Avatar */
+  .avatar-wrap { position: relative; flex-shrink: 0; width: 100px; height: 115px; display: flex; align-items: center; justify-content: center; }
+  .avatar-ring {
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    animation: pulseGlow 4s ease-in-out infinite;
+  }
+  @keyframes pulseGlow {
+    0%, 100% { opacity: 0.8; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.03); }
+  }
+
+  .avatar {
+    width: 94px; height: 108px; object-fit: cover; object-position: top;
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    background: var(--bg); display: block; filter: contrast(1.1);
+    position: relative; z-index: 2;
+  }
+
+  .profile-info { flex: 1; }
+  .name-th { font-weight: 600; font-size: 22px; color: white; line-height: 1.1; margin-bottom: 4px; }
+  .name-en { font-weight: 700; font-size: 20px; color: var(--accent); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; text-shadow: 0 0 10px rgba(0,240,255,0.3); }
+  .title-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(112,0,255,0.2); border-left: 2px solid var(--accent2);
+    padding: 4px 10px; font-family: var(--mono); font-size: 10px; 
+    color: #fff; letter-spacing: 1px;
+  }
+
+  /* Data Waveform Divider */
+  .circuit-divider { position: relative; height: 30px; margin: 0; overflow: visible; opacity: 0.7; }
+  .circuit-divider svg { width: 100%; height: 100%; }
+
+  .company-section { padding: 0 30px 20px; }
+  .company-name-th { font-weight: 500; font-size: 14px; color: var(--text-dim); margin-bottom: 2px; }
+  .company-name-en { font-weight: 700; font-size: 18px; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; }
+
+  .contacts { padding: 0 25px 25px; display: flex; flex-direction: column; gap: 10px; }
+  .contact-item {
+    display: flex; align-items: center; gap: 16px; padding: 12px 16px;
+    background: linear-gradient(90deg, rgba(255,255,255,0.03) 0%, transparent 100%);
+    border-left: 2px solid rgba(255,255,255,0.1);
+    cursor: pointer; text-decoration: none; transition: all 0.3s ease; 
+    position: relative;
+  }
+  .contact-item:hover { 
+    background: linear-gradient(90deg, rgba(0,240,255,0.1) 0%, transparent 100%);
+    border-left-color: var(--accent);
+    transform: translateX(5px); 
+  }
+
+  .contact-icon {
+    font-size: 16px; width: 24px; text-align: center;
+    filter: grayscale(1) brightness(2); opacity: 0.7; transition: all 0.3s;
+  }
+  .contact-item:hover .contact-icon { filter: grayscale(0); opacity: 1; transform: scale(1.1); }
+
+  .contact-text { flex: 1; min-width: 0; }
+  .contact-label { font-family: var(--mono); font-size: 10px; color: var(--accent); letter-spacing: 1px; margin-bottom: 2px; }
+  .contact-value { font-size: 15px; color: var(--text); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  .contact-arrow { font-family: var(--mono); font-size: 12px; color: var(--text-dim); transition: 0.3s; }
+  .contact-item:hover .contact-arrow { color: var(--accent); content: '>>'; }
+
+  .actions { padding: 0 25px 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  
+  /* Cyber Buttons */
+  .btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 14px; font-family: var(--mono); font-size: 12px;
+    letter-spacing: 1px; cursor: pointer; border: none;
+    transition: all 0.2s ease; text-decoration: none; font-weight: 700;
+    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+  }
+  .btn-primary {
+    background: var(--accent); color: #000;
+    box-shadow: inset 0 0 10px rgba(255,255,255,0.5);
+  }
+  .btn-primary:hover { background: #fff; transform: translateY(-2px); }
+  
+  .btn-secondary { 
+    background: rgba(112,0,255,0.2); color: #fff; 
+    border: 1px solid var(--accent2);
+  }
+  .btn-secondary:hover { background: var(--accent2); transform: translateY(-2px); }
+
+  .card-footer {
+    border-top: 1px dashed rgba(255,255,255,0.1); padding: 16px 30px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(0,0,0,0.2);
+  }
+  .footer-brand { font-family: var(--mono); font-size: 10px; color: var(--text-dim); }
+  .scan-badge { display: flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 10px; color: var(--accent3); }
+
+  .qr-section {
+    padding: 14px 20px; display: flex; align-items: center; gap: 16px;
+    background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05);
+    margin: 0 25px 20px; cursor: pointer; transition: 0.3s;
+    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+  }
+  .qr-section:hover { background: rgba(0,240,255,0.05); border-color: var(--accent); }
+  .qr-box { width: 60px; height: 60px; background: #fff; padding: 4px; display: flex; align-items: center; justify-content: center; clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px); }
+  .qr-box svg { width: 100%; height: 100%; }
+  .qr-info { flex: 1; }
+  .qr-title { font-family: var(--mono); font-size: 11px; color: var(--accent); margin-bottom: 4px; }
+  .qr-desc { font-size: 12px; color: var(--text-dim); }
+
+  /* Holographic Scanline */
+  .card::after {
+    content: ''; position: absolute; top: -100px; left: 0; right: 0; height: 100px;
+    background: linear-gradient(to bottom, transparent, rgba(0,240,255,0.1), rgba(255,255,255,0.2));
+    animation: holoScan 6s linear infinite; pointer-events: none; z-index: 10;
+  }
+  @keyframes holoScan {
+    0% { transform: translateY(-100px); } 100% { transform: translateY(800px); }
+  }
+
+  .copied-toast {
+    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: #fff; color: #000; font-family: var(--mono); font-size: 12px; font-weight: bold;
+    padding: 10px 24px; clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+    opacity: 0; transition: all 0.3s ease; pointer-events: none; z-index: 100;
+  }
+  .copied-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .address-item .contact-value { white-space: normal; font-size: 13px; line-height: 1.4; color: var(--text-dim); }
+
+  /* QR Popup */
+  .qr-overlay {
+    position: fixed; inset: 0; z-index: 200; background: rgba(5,7,10,0.9); backdrop-filter: blur(10px);
+    display: flex; align-items: center; justify-content: center; flex-direction: column;
+    opacity: 0; pointer-events: none; transition: 0.3s;
+  }
+  .qr-overlay.show { opacity: 1; pointer-events: auto; }
+  .qr-overlay-box { width: 240px; height: 240px; padding: 20px; background: #fff; box-shadow: 0 0 50px var(--accent); }
+  .qr-overlay-box svg { width: 100%; height: 100%; }
+  .qr-overlay-text { font-family: var(--mono); font-size: 14px; color: var(--accent); margin-top: 20px; }
+  .qr-overlay-close { font-family: var(--mono); font-size: 12px; color: #fff; margin-top: 15px; cursor: pointer; padding: 8px 20px; border: 1px solid rgba(255,255,255,0.2); background: none; transition: 0.2s; }
+  .qr-overlay-close:hover { background: rgba(255,255,255,0.1); border-color: #fff; }
+</style>
+</head>
+<body>
+
+<div class="particles" id="particles"></div>
+<div class="copied-toast" id="toast">DATA COPIED_</div>
+
+<div class="card-wrapper">
+  <div class="card-border">
+    <div class="card">
+
+      <div class="card-header">
+        <div class="sys-id">NODE_ID: NYTG-GRP-<%= new Date().getFullYear() %></div>
+        <div class="profile-row">
+          <div class="avatar-wrap">
+            <div class="avatar-ring"></div>
+            <img class="avatar" src="<%= card.profile_image || '' %>" alt="<%= card.name_en %>" onerror="this.style.background='linear-gradient(135deg,#1e293b,#0f172a)';this.src=''">
+          </div>
+          <div class="profile-info">
+            <% if (card.name_th) { %><div class="name-th"><%= card.name_th %></div><% } %>
+            <div class="name-en"><%= card.name_en %></div>
+            <% if (card.title) { %><div class="title-badge"><%= card.title.toUpperCase() %></div><% } %>
+          </div>
+        </div>
+      </div>
+
+      <div class="circuit-divider">
+        <svg viewBox="0 0 480 30" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+          <polyline points="0,15 120,15 130,5 140,25 150,15 320,15 330,8 340,15 480,15" fill="none" stroke="var(--accent)" stroke-width="1.5" opacity="0.6"/>
+          <rect x="50" y="13" width="15" height="4" fill="var(--accent2)" opacity="0.8"/>
+          <circle cx="140" cy="25" r="3" fill="var(--accent)"/>
+          <circle cx="130" cy="5" r="3" fill="var(--accent)"/>
+          <rect x="250" y="13" width="8" height="4" fill="var(--accent3)" opacity="0.8"/>
+          <rect x="400" y="13" width="20" height="4" fill="var(--text-dim)" opacity="0.5"/>
+        </svg>
+      </div>
+
+      <% if (card.company_th || card.company_en) { %>
+      <div class="company-section">
+        <% if (card.company_th) { %><div class="company-name-th"><%= card.company_th %></div><% } %>
+        <% if (card.company_en) { %><div class="company-name-en"><%= card.company_en %></div><% } %>
+      </div>
+      <% } %>
+
+      <div class="contacts">
+        <% if (card.mobile) { %>
+        <a class="contact-item" href="tel:<%= card.mobile %>" onclick="copyToClipboard('<%= card.mobile %>')">
+          <div class="contact-icon">📱</div>
+          <div class="contact-text">
+            <div class="contact-label">COM.LINK_01</div>
+            <div class="contact-value"><%= card.mobile %></div>
+          </div>
+          <div class="contact-arrow">>_</div>
+        </a>
+        <% } %>
+
+        <% if (card.mobile2) { %>
+        <a class="contact-item" href="tel:<%= card.mobile2 %>" onclick="copyToClipboard('<%= card.mobile2 %>')">
+          <div class="contact-icon">📱</div>
+          <div class="contact-text">
+            <div class="contact-label">COM.LINK_02</div>
+            <div class="contact-value"><%= card.mobile2 %></div>
+          </div>
+          <div class="contact-arrow">>_</div>
+        </a>
+        <% } %>
+
+        <% if (card.office_phone) { %>
+        <a class="contact-item" href="tel:<%= card.office_phone.split('/')[0].trim().split(' ')[0] %>">
+          <div class="contact-icon">☎️</div>
+          <div class="contact-text">
+            <div class="contact-label">HQ_DIRECT</div>
+            <div class="contact-value"><%= card.office_phone %></div>
+          </div>
+          <div class="contact-arrow">>_</div>
+        </a>
+        <% } %>
+
+        <% if (card.email) { %>
+        <a class="contact-item" href="mailto:<%= card.email %>" onclick="copyToClipboard('<%= card.email %>')">
+          <div class="contact-icon">✉️</div>
+          <div class="contact-text">
+            <div class="contact-label">SECURE_MAIL</div>
+            <div class="contact-value"><%= card.email %></div>
+          </div>
+          <div class="contact-arrow">>_</div>
+        </a>
+        <% } %>
+
+        <% if (card.website) { %>
+        <a class="contact-item" href="<%= card.website %>" target="_blank">
+          <div class="contact-icon">🌐</div>
+          <div class="contact-text">
+            <div class="contact-label">WEB_PORTAL</div>
+            <div class="contact-value"><%= card.website.replace(/^https?:\/\//, '') %></div>
+          </div>
+          <div class="contact-arrow">>_</div>
+        </a>
+        <% } %>
+
+        <% if (card.address) { %>
+        <div class="contact-item address-item">
+          <div class="contact-icon">📍</div>
+          <div class="contact-text">
+            <div class="contact-label">PHYSICAL_LOC</div>
+            <div class="contact-value"><%= card.address %></div>
+          </div>
+        </div>
+        <% } %>
+      </div>
+
+      <% if (qrCodeSvg) { %>
+      <div class="qr-section" onclick="openQr()">
+        <div class="qr-box"><%- qrCodeSvg %></div>
+        <div class="qr-info">
+          <div class="qr-title">SCAN_TO_SYNC</div>
+          <div class="qr-desc">Access identity matrix</div>
+        </div>
+      </div>
+      <div class="qr-overlay" id="qrOverlay" onclick="closeQr(event)">
+        <div class="qr-overlay-box"><%- qrCodeSvg %></div>
+        <div class="qr-overlay-text">AWAITING SCAN...</div>
+        <button class="qr-overlay-close" onclick="closeQr(event)">[ CANCEL ]</button>
+      </div>
+      <% } %>
+
+      <div class="actions">
+        <button class="btn btn-primary" onclick="saveContact()">
+          <span>[+]</span> DOWNLOAD.VCF
+        </button>
+        <button class="btn btn-secondary" onclick="shareCard()">
+          <span>[>]</span> TRANSMIT
+        </button>
+      </div>
+
+      <div class="card-footer">
+        <div class="footer-brand"><%= card.company_en ? card.company_en.toUpperCase() : 'SYS.CORE' %> // V.2.0</div>
+        <div class="scan-badge">
+          <span style="color: var(--accent)">●</span> ENCRYPTED
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  // Vertical Matrix Rain Particles
+  const container = document.getElementById('particles');
+  for (let i = 0; i < 30; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.height = (Math.random() * 30 + 10) + 'px';
+    p.style.animationDuration = (Math.random() * 2 + 1) + 's';
+    p.style.animationDelay = (Math.random() * 2) + 's';
+    if (Math.random() > 0.6) p.style.background = 'linear-gradient(to bottom, transparent, var(--accent2))';
+    container.appendChild(p);
+  }
+
+  function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).catch(() => {});
+    const toast = document.getElementById('toast');
+    toast.textContent = 'DATA COPIED_';
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2000);
+  }
+
+  function saveContact() {
+    const nameParts = '<%= card.name_en %>'.split(' ');
+    const lastName = nameParts.pop();
+    const firstName = nameParts.join(' ');
+    const vcard = [
+      'BEGIN:VCARD',
+      'VERSION:3.0',
+      'N:' + lastName + ';' + firstName + ';;;',
+      'FN:<%= card.name_en %>',
+      '<%= card.company_en ? "ORG:" + card.company_en : "" %>',
+      '<%= card.title ? "TITLE:" + card.title : "" %>',
+      '<%= card.mobile ? "TEL;TYPE=CELL:" + card.mobile : "" %>',
+      '<%= card.mobile2 ? "TEL;TYPE=CELL:" + card.mobile2 : "" %>',
+      '<%= card.office_phone ? "TEL;TYPE=WORK:" + card.office_phone.split("/")[0].trim() : "" %>',
+      '<%= card.email ? "EMAIL;TYPE=WORK:" + card.email : "" %>',
+      '<%= card.website ? "URL:" + card.website : "" %>',
+      '<%= card.address ? "ADR;TYPE=WORK:;;" + card.address.replace(/,/g, ";") : "" %>',
+      'END:VCARD'
+    ].filter(line => line && !line.endsWith(':')).join('\r\n');
+
+    const blob = new Blob([vcard], { type: 'text/vcard' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = '<%= card.name_en.toLowerCase().replace(/\\s+/g, "_") %>.vcf';
+    a.click();
+    URL.revokeObjectURL(url);
+    const toast = document.getElementById('toast');
+    toast.textContent = 'SYNC COMPLETE_';
+    toast.classList.add('show');
+    setTimeout(() => { toast.classList.remove('show'); toast.textContent = 'DATA COPIED_'; }, 2500);
+  }
+
+  function openQr() { document.getElementById('qrOverlay').classList.add('show'); }
+  function closeQr(e) {
+    if (e.target.id === 'qrOverlay' || e.target.classList.contains('qr-overlay-close')) {
+      document.getElementById('qrOverlay').classList.remove('show');
+    }
+  }
+
+  function shareCard() {
+    if (navigator.share) {
+      navigator.share({
+        title: '<%= card.name_en %><%= card.title ? " – " + card.title : "" %>',
+        text: '<%= card.company_en ? card.company_en + "\\n" : "" %><%= card.mobile ? "Tel: " + card.mobile + "\\n" : "" %><%= card.email ? "Email: " + card.email : "" %>',
+        url: window.location.href
+      }).catch(() => {});
+    } else {
+      copyToClipboard(window.location.href);
+      const toast = document.getElementById('toast');
+      toast.textContent = 'LINK SECURED_';
+      toast.classList.add('show');
+      setTimeout(() => { toast.classList.remove('show'); toast.textContent = 'DATA COPIED_'; }, 2500);
+    }
+  }
+</script>
+</body>
+</html>

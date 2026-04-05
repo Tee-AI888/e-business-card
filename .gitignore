@@ -1,0 +1,5 @@
+node_modules/
+database/ecard.db
+.env
+public/uploads/profiles/*
+!public/uploads/profiles/.gitkeep

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login – E-Card Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@300;400;600;700&family=Barlow+Condensed:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050d1a;
+    --panel: #080f1e;
+    --card: #0a1628;
+    --border: #1a3060;
+    --accent: #00d4ff;
+    --accent2: #0066ff;
+    --accent3: #00ff9d;
+    --text: #c8daf0;
+    --text-dim: #4a6a8a;
+    --mono: 'Share Tech Mono', monospace;
+    --sans: 'Barlow', sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    font-family: var(--sans);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  .login-box {
+    width: 100%;
+    max-width: 400px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px 32px;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 0 30px rgba(0,212,255,0.1), 0 20px 60px rgba(0,0,0,0.5);
+  }
+  .login-title {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent3);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .login-heading {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 32px;
+  }
+  .form-group {
+    margin-bottom: 20px;
+  }
+  .form-label {
+    display: block;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .form-input {
+    width: 100%;
+    padding: 12px 16px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(0,212,255,0.1);
+  }
+  .error-msg {
+    background: rgba(255,50,50,0.1);
+    border: 1px solid rgba(255,50,50,0.3);
+    color: #ff6b6b;
+    font-size: 12px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-family: var(--mono);
+    letter-spacing: 1px;
+  }
+  .btn-login {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    color: var(--bg);
+    border: none;
+    border-radius: 10px;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.25s;
+    box-shadow: 0 0 20px rgba(0,212,255,0.25);
+  }
+  .btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(0,212,255,0.4);
+  }
+  .footer-text {
+    text-align: center;
+    margin-top: 24px;
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+  }
+</style>
+</head>
+<body>
+  <div class="login-box">
+    <div class="login-title">// AUTHENTICATION</div>
+    <div class="login-heading">Admin Login</div>
+    <% if (error) { %>
+      <div class="error-msg">⚠ <%= error %></div>
+    <% } %>
+    <form method="POST" action="/api/auth/login">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="form-group">
+        <label class="form-label">Username</label>
+        <input class="form-input" type="text" name="username" required autocomplete="username" autofocus>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" type="password" name="password" required autocomplete="current-password">
+      </div>
+      <button class="btn-login" type="submit">⊕ AUTHENTICATE</button>
+    </form>
+    <div class="footer-text">E-CARD MANAGEMENT SYSTEM</div>
+  </div>
+</body>
+</html>
