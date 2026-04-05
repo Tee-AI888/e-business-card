@@ -71,6 +71,7 @@ router.post('/cards', requireAdmin, upload.single('profile_image'), [
   body('email').optional().trim().isEmail().withMessage('Invalid email').normalizeEmail(),
   body('website').optional().trim(),
   body('address').optional().trim().escape(),
+  body('map_url').optional().trim(),
   body('theme_id').isInt().withMessage('Theme is required'),
 ], (req, res) => {
   // Validate CSRF for multipart forms (after multer parses body)
@@ -103,9 +104,15 @@ router.post('/cards', requireAdmin, upload.single('profile_image'), [
     website = 'https://' + website;
   }
 
+  // Sanitize map URL
+  let mapUrl = req.body.map_url || '';
+  if (mapUrl && !mapUrl.match(/^https?:\/\//)) {
+    mapUrl = 'https://' + mapUrl;
+  }
+
   db.prepare(`
-    INSERT INTO cards (uuid, company_id, name_th, name_en, title, company_th, company_en, department, mobile, mobile2, office_phone, email, website, address, profile_image, theme_id)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO cards (uuid, company_id, name_th, name_en, title, company_th, company_en, department, mobile, mobile2, office_phone, email, website, address, map_url, profile_image, theme_id)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).run(
     uuid,
     req.body.company_id ? parseInt(req.body.company_id) : null,
@@ -121,6 +128,7 @@ router.post('/cards', requireAdmin, upload.single('profile_image'), [
     req.body.email || null,
     website || null,
     req.body.address || null,
+    mapUrl || null,
     profileImage,
     parseInt(req.body.theme_id)
   );
@@ -143,6 +151,7 @@ router.post('/cards/:id/update', requireAdmin, upload.single('profile_image'), [
   body('email').optional().trim().isEmail().withMessage('Invalid email').normalizeEmail(),
   body('website').optional().trim(),
   body('address').optional().trim().escape(),
+  body('map_url').optional().trim(),
   body('theme_id').isInt().withMessage('Theme is required'),
 ], (req, res) => {
   // Validate CSRF for multipart forms (after multer parses body)
@@ -191,11 +200,17 @@ router.post('/cards/:id/update', requireAdmin, upload.single('profile_image'), [
     website = 'https://' + website;
   }
 
+  // Sanitize map URL
+  let mapUrl = req.body.map_url || '';
+  if (mapUrl && !mapUrl.match(/^https?:\/\//)) {
+    mapUrl = 'https://' + mapUrl;
+  }
+
   db.prepare(`
     UPDATE cards SET
       company_id = ?, name_th = ?, name_en = ?, title = ?, company_th = ?, company_en = ?,
       department = ?, mobile = ?, mobile2 = ?, office_phone = ?, email = ?, website = ?,
-      address = ?, profile_image = ?, theme_id = ?, updated_at = CURRENT_TIMESTAMP
+      address = ?, map_url = ?, profile_image = ?, theme_id = ?, updated_at = CURRENT_TIMESTAMP
     WHERE id = ?
   `).run(
     req.body.company_id ? parseInt(req.body.company_id) : null,
@@ -211,6 +226,7 @@ router.post('/cards/:id/update', requireAdmin, upload.single('profile_image'), [
     req.body.email || null,
     website || null,
     req.body.address || null,
+    mapUrl || null,
     profileImage,
     parseInt(req.body.theme_id),
     req.params.id

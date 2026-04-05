@@ -145,6 +145,11 @@
             <label class="form-label">Address</label>
             <textarea class="form-input form-textarea" name="address" id="addressField" rows="3" placeholder="Full address"><%= card ? (card.address || '') : '' %></textarea>
           </div>
+
+          <div class="form-group">
+            <label class="form-label">Map URL</label>
+            <input class="form-input" type="url" name="map_url" value="<%= card ? (card.map_url || '') : '' %>" placeholder="e.g. https://maps.app.goo.gl/...">
+          </div>
         </div>
       </div>
 

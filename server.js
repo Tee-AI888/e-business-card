@@ -64,11 +64,13 @@ app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
 // Serve legacy profile image path
 app.use('/Profile', express.static(path.join(__dirname, 'Profile')));
 
-// Make session data available to views
+// Make session data + helpers available to views
+const { parseOfficePhone } = require('./utils/phone');
 app.use((req, res, next) => {
   res.locals.admin = req.session.adminId ? true : false;
   res.locals.adminUsername = req.session.adminUsername || '';
   res.locals.adminDisplayName = req.session.adminDisplayName || req.session.adminUsername || '';
+  res.locals.parseOfficePhone = parseOfficePhone;
   next();
 });
 

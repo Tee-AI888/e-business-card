@@ -178,6 +178,7 @@ function seed() {
       office_phone: '+6624212150 / 421-2160 Ext. 1630',
       website: 'https://www.nanyangtextile.com',
       address: 'Nan Yang Textile Building, 27 Phetkasem Rd., Nongkangploo, Nongkham, Bangkok 10160, Thailand',
+      map_url: 'https://maps.app.goo.gl/XMAKoDpjWSJ4fS4E6',
       profile_image: '/uploads/profiles/9e30d93d-d119-412c-86f9-10b1cc460d2f.jpg',
       theme_slug: 'cyberpunk'
     },
@@ -195,6 +196,7 @@ function seed() {
       office_phone: '024212150',
       website: 'https://www.nanyangtextile.com',
       address: 'Nan Yang Textile Building, 27 Phetkasem Rd., Nongkangploo, Nongkham, Bangkok 10160, Thailand',
+      map_url: 'https://maps.app.goo.gl/XMAKoDpjWSJ4fS4E6',
       profile_image: '/uploads/profiles/17458d58-9b3c-442d-82c8-b4a5ee250b78.jpg',
       theme_slug: 'premium-glassmorphism'
     }
@@ -214,14 +216,14 @@ function seed() {
     const compId = card.company_id_ref ? (companyIds[card.company_id_ref] || null) : (card.company_id || null);
     const cardUuid = uuidv4();
     db.prepare(`
-      INSERT INTO cards (uuid, company_id, name_th, name_en, title, company_th, company_en, department, mobile, mobile2, office_phone, email, website, address, profile_image, theme_id)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO cards (uuid, company_id, name_th, name_en, title, company_th, company_en, department, mobile, mobile2, office_phone, email, website, address, map_url, profile_image, theme_id)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).run(
       cardUuid, compId,
       card.name_th, card.name_en, card.title,
       card.company_th, card.company_en, card.department,
       card.mobile, card.mobile2, card.office_phone,
-      card.email, card.website, card.address, card.profile_image,
+      card.email, card.website, card.address, card.map_url || null, card.profile_image,
       theme.id
     );
     console.log(`  ✓ Card "${card.name_en}" created (UUID: ${cardUuid})`);

@@ -62,6 +62,7 @@ db.exec(`
     email TEXT,
     website TEXT,
     address TEXT,
+    map_url TEXT,
     profile_image TEXT,
     theme_id INTEGER NOT NULL,
     is_active INTEGER DEFAULT 1,

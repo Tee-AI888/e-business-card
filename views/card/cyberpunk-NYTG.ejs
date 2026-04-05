@@ -334,29 +334,19 @@
           <div class="contact-icon">📱</div>
           <div class="contact-text">
             <div class="contact-label">MOBILE</div>
-            <div class="contact-value"><%= card.mobile %></div>
-          </div>
-          <div class="contact-arrow">›</div>
-        </a>
-        <% } %>
-
-        <% if (card.mobile2) { %>
-        <a class="contact-item" href="tel:<%= card.mobile2 %>" onclick="copyToClipboard('<%= card.mobile2 %>')">
-          <div class="contact-icon">📱</div>
-          <div class="contact-text">
-            <div class="contact-label">MOBILE 2</div>
-            <div class="contact-value"><%= card.mobile2 %></div>
+            <div class="contact-value"><%= card.mobile %><%= card.mobile2 ? ' / ' + card.mobile2 : '' %></div>
           </div>
           <div class="contact-arrow">›</div>
         </a>
         <% } %>
 
         <% if (card.office_phone) { %>
-        <a class="contact-item" href="tel:<%= card.office_phone.split('/')[0].trim().split(' ')[0] %>">
+        <% var op = parseOfficePhone(card.office_phone); %>
+        <a class="contact-item" href="tel:<%= op.phones[0].replace(/[^\d+]/g, '') %>">
           <div class="contact-icon">☎️</div>
           <div class="contact-text">
-            <div class="contact-label">OFFICE TEL</div>
-            <div class="contact-value"><%= card.office_phone %></div>
+            <div class="contact-label">OFFICE TEL<%= op.ext ? ' (Ext. ' + op.ext + ')' : '' %></div>
+            <div class="contact-value"><%= op.phones.join(' / ') %><%= op.ext ? ' Ext. ' + op.ext : '' %></div>
           </div>
           <div class="contact-arrow">›</div>
         </a>
@@ -385,13 +375,21 @@
         <% } %>
 
         <% if (card.address) { %>
+        <% if (card.map_url) { %>
+        <a href="<%= card.map_url %>" target="_blank" class="contact-item address-item">
+        <% } else { %>
         <div class="contact-item address-item">
+        <% } %>
           <div class="contact-icon">📍</div>
           <div class="contact-text">
             <div class="contact-label">ADDRESS</div>
             <div class="contact-value"><%= card.address %></div>
           </div>
+        <% if (card.map_url) { %>
+        </a>
+        <% } else { %>
         </div>
+        <% } %>
         <% } %>
       </div>
 
@@ -467,7 +465,8 @@
       '<%= card.title ? "TITLE:" + card.title : "" %>',
       '<%= card.mobile ? "TEL;TYPE=CELL:" + card.mobile : "" %>',
       '<%= card.mobile2 ? "TEL;TYPE=CELL:" + card.mobile2 : "" %>',
-      '<%= card.office_phone ? "TEL;TYPE=WORK:" + card.office_phone.split("/")[0].trim() : "" %>',
+      <% if (card.office_phone) { var _op = parseOfficePhone(card.office_phone); _op.phones.forEach(function(ph) { %>'TEL;TYPE=WORK:<%= ph.replace(/[^\d+]/g, "") %>',
+      <% }); } %>
       '<%= card.email ? "EMAIL;TYPE=WORK:" + card.email : "" %>',
       '<%= card.website ? "URL:" + card.website : "" %>',
       '<%= card.address ? "ADR;TYPE=WORK:;;" + card.address.replace(/,/g, ";") : "" %>',

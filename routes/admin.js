@@ -4,6 +4,21 @@ const QRCode = require('qrcode');
 const db = require('../database/db');
 const { requireAdmin } = require('../middleware/auth');
 
+// Get first active card from DB for theme preview, fallback to defaults
+function getPreviewCard() {
+  const card = db.prepare('SELECT * FROM cards WHERE is_active = 1 ORDER BY id ASC LIMIT 1').get();
+  if (card) return card;
+  return {
+    uuid: 'preview', name_en: 'John Doe', name_th: 'จอห์น โด',
+    title: 'Software Engineer', company_en: 'Example Co., Ltd.',
+    company_th: 'บริษัท ตัวอย่าง จำกัด', department: 'IT',
+    mobile: '+66 91-234-5678', mobile2: null,
+    office_phone: '+66 2-123-4567', email: 'john@example.com',
+    website: 'https://example.com',
+    address: '123 Bangkok, Thailand', profile_image: null
+  };
+}
+
 // All admin routes require authentication
 router.use(requireAdmin);
 
@@ -85,22 +100,7 @@ router.get('/themes/:id/preview', async (req, res) => {
   let cssVars = {};
   try { cssVars = JSON.parse(theme.css_variables); } catch (e) {}
 
-  const dummyCard = {
-    uuid: 'preview',
-    name_en: 'John Doe',
-    name_th: 'จอห์น โด',
-    title: 'Senior Software Engineer',
-    company_en: 'Acme Corporation Co., Ltd.',
-    company_th: 'บริษัท แอคมี่ คอร์ปอเรชั่น จำกัด',
-    department: 'Information Technology',
-    mobile: '+66 91-234-5678',
-    mobile2: '+66 81-987-6543',
-    office_phone: '+66 2-123-4567 Ext. 100',
-    email: 'john.doe@acme-corp.com',
-    website: 'https://www.acme-corp.com',
-    address: '123 Sukhumvit Road, Klongtoey, Bangkok 10110, Thailand',
-    profile_image: null
-  };
+  const previewCard = getPreviewCard();
 
   let qrCodeSvg = '';
   try {
@@ -111,7 +111,7 @@ router.get('/themes/:id/preview', async (req, res) => {
   } catch (e) {}
 
   res.render(`card/${theme.template_name}`, {
-    card: dummyCard,
+    card: previewCard,
     cssVars,
     qrCodeSvg,
     cardUrl: '#'
@@ -125,22 +125,7 @@ router.post('/themes/preview', async (req, res) => {
 
   const templateName = (req.body.template_name || 'cyberpunk-NYK').replace(/[^a-zA-Z0-9_-]/g, '');
 
-  const dummyCard = {
-    uuid: 'preview',
-    name_en: 'John Doe',
-    name_th: 'จอห์น โด',
-    title: 'Senior Software Engineer',
-    company_en: 'Acme Corporation Co., Ltd.',
-    company_th: 'บริษัท แอคมี่ คอร์ปอเรชั่น จำกัด',
-    department: 'Information Technology',
-    mobile: '+66 91-234-5678',
-    mobile2: '+66 81-987-6543',
-    office_phone: '+66 2-123-4567 Ext. 100',
-    email: 'john.doe@acme-corp.com',
-    website: 'https://www.acme-corp.com',
-    address: '123 Sukhumvit Road, Klongtoey, Bangkok 10110, Thailand',
-    profile_image: null
-  };
+  const previewCard = getPreviewCard();
 
   let qrCodeSvg = '';
   try {
@@ -151,7 +136,7 @@ router.post('/themes/preview', async (req, res) => {
   } catch (e) {}
 
   res.render(`card/${templateName}`, {
-    card: dummyCard,
+    card: previewCard,
     cssVars,
     qrCodeSvg,
     cardUrl: '#'
