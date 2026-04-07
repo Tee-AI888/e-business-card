@@ -179,7 +179,7 @@ function seed() {
       website: 'https://www.nanyangtextile.com',
       address: 'Nan Yang Textile Building, 27 Phetkasem Rd., Nongkangploo, Nongkham, Bangkok 10160, Thailand',
       map_url: 'https://maps.app.goo.gl/XMAKoDpjWSJ4fS4E6',
-      profile_image: '/uploads/profiles/9e30d93d-d119-412c-86f9-10b1cc460d2f.jpg',
+      profile_image: '/Profile/piyawat.jpg',
       theme_slug: 'cyberpunk'
     },
     {
@@ -197,14 +197,19 @@ function seed() {
       website: 'https://www.nanyangtextile.com',
       address: 'Nan Yang Textile Building, 27 Phetkasem Rd., Nongkangploo, Nongkham, Bangkok 10160, Thailand',
       map_url: 'https://maps.app.goo.gl/XMAKoDpjWSJ4fS4E6',
-      profile_image: '/uploads/profiles/17458d58-9b3c-442d-82c8-b4a5ee250b78.jpg',
+      profile_image: '/Profile/phon.jpg',
       theme_slug: 'premium-glassmorphism'
     }
   ];
 
   for (const card of cards) {
-    const exists = db.prepare('SELECT id FROM cards WHERE email = ?').get(card.email);
+    const exists = db.prepare('SELECT id, profile_image FROM cards WHERE email = ?').get(card.email);
     if (exists) {
+      // Migrate legacy seeded image URLs that point to missing uploads files.
+      if (exists.profile_image !== card.profile_image) {
+        db.prepare('UPDATE cards SET profile_image = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?').run(card.profile_image, exists.id);
+        console.log(`  ~ Card "${card.name_en}" profile image path updated`);
+      }
       console.log(`  - Card "${card.name_en}" already exists`);
       continue;
     }

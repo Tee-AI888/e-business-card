@@ -6,8 +6,11 @@ services:
     environment:
       PORT: "8503"
       NODE_ENV: production
-      SESSION_SECRET: ${SESSION_SECRET:-change-this-secret-in-production}
-      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-change-this-admin-password}
+      USE_HTTPS: "false"
+      SESSION_SECRET: change-this-secret-in-production
+      ADMIN_PASSWORD: change-this-to-your-admin-password
+      LOGIN_RATE_LIMIT_WINDOW_MS: "900000"
+      LOGIN_RATE_LIMIT_MAX: "20"
     volumes:
       - ./database:/app/database
       - ./public/uploads:/app/public/uploads

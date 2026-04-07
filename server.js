@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const cors = require('cors');
 const session = require('express-session');
 const crypto = require('crypto');
 const path = require('path');
@@ -8,6 +9,26 @@ const seed = require('./database/seed');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const useHttps = process.env.USE_HTTPS === 'true';
+
+function buildCorsOptions() {
+  const raw = process.env.CORS_ORIGIN || process.env.CORS_ORIGINS;
+  let origin;
+  if (raw && raw.trim()) {
+    const list = raw.split(',').map((s) => s.trim()).filter(Boolean);
+    origin = list.length === 1 ? list[0] : list;
+  } else {
+    origin = true;
+  }
+  return {
+    origin,
+    credentials: true,
+    optionsSuccessStatus: 204,
+    allowedHeaders: ['Content-Type', 'X-CSRF-Token', 'Authorization'],
+  };
+}
+
+app.use(cors(buildCorsOptions()));
 
 // View engine
 app.set('view engine', 'ejs');
@@ -28,7 +49,7 @@ app.use(session({
   cookie: {
     httpOnly: true,
     sameSite: 'lax',
-    secure: process.env.NODE_ENV === 'production',
+    secure: useHttps,
     maxAge: 24 * 60 * 60 * 1000 // 24 hours
   }
 }));
